@@ -29,12 +29,12 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-group 'de.debuglevel.microservices.greeting'
+group 'de.debuglevel.monitoring'
 version '0.0.1-SNAPSHOT'
 
 // application plugin configuration
-applicationName = "Greeting Microservice"
-mainClassName = "de.debuglevel.microservices.greeting.MainKt"
+applicationName = "Monitoring Microservice"
+mainClassName = "de.debuglevel.monitoring.MainKt"
 
 sourceCompatibility = 1.8
 
@@ -42,6 +42,9 @@ repositories {
     jcenter()
     maven {
         url "https://dl.bintray.com/debuglevel/maven"
+    }
+    maven {
+        url "https://jitpack.io"
     }
 }
 
@@ -60,12 +63,18 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.5'
     compile 'org.slf4j:slf4j-simple:1.7.5'
 
+    // khttp
+    compile 'com.github.jkcclemens:khttp:-SNAPSHOT'
+
     // Spark (REST Server)
     compile 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     compile 'de.debuglevel.sparkmicroserviceutils:sparkmicroserviceutils:0.0.20'
 
     // JSON
     compile 'com.google.code.gson:gson:2.8.4'
+
+    // Database
+    compile 'org.mapdb:mapdb:3.0.7'
 }
 
 // jar configuration is still needed (despite of application plugin) to add Manifest to traditional jar

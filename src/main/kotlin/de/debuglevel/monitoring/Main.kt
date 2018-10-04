@@ -1,6 +1,6 @@
-package de.debuglevel.microservices.greeting
+package de.debuglevel.monitoring
 
-import de.debuglevel.microservices.greeting.rest.RestEndpoint
+import de.debuglevel.monitoring.rest.RestEndpoint
 
 /**
  * Application entry point.
