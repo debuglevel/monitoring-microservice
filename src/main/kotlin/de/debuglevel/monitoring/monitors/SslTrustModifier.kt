@@ -1,14 +1,14 @@
-package de.debuglevel.monitoring
+package de.debuglevel.monitoring.monitors
 
-import javax.net.ssl.*
 import java.net.HttpURLConnection
 import java.security.KeyManagementException
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
+import javax.net.ssl.*
 
-object TrustModifier {
+object SslTrustModifier {
     private val TRUSTING_HOSTNAME_VERIFIER = TrustingHostnameVerifier()
     private var factory: SSLSocketFactory? = null
 

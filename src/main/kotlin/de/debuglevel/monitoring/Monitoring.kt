@@ -2,35 +2,34 @@ package de.debuglevel.monitoring
 
 import java.net.URI
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
-data class Monitoring (val id: Int, val url: String) {
-    //@Transient
+data class Monitoring(val id: Int, val url: String) {
+    /**
+     * Last known serviceState of the service
+     */
+    var serviceState: ServiceState? = null
+
+    /**
+     * When the service was last in the "up" serviceState
+     */
     var lastSeen: LocalDateTime? = null
 
-    var lastCheckOkay: Boolean? = null
+    /**
+     * When the service was checked the last time
+     */
+    var lastCheck: LocalDateTime? = null
 
+    /**
+     * ID field for MongoDB
+     */
     val _id
         get() = id
 
-    val state: String
-    get() {
-        return when (lastCheckOkay)
-        {
-            true -> "[ UP ]"
-            false -> "[DOWN]"
-            else -> "[ ?? ]"
-        }
-    }
-
+    /**
+     * URI (generated from the "url" property)
+     */
     @Transient
     val uri = URI(url)
-
-    val lastSeenString: String
-        get() {
-            return lastSeen?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)) ?: "never"
-        }
 
     override fun toString() = "$url"
 }

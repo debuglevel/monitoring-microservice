@@ -4,15 +4,17 @@ import com.google.gson.GsonBuilder
 import de.debuglevel.microservices.utils.apiversion.apiVersion
 import de.debuglevel.microservices.utils.spark.configuredPort
 import de.debuglevel.microservices.utils.status.status
-import de.debuglevel.monitoring.Monitoring
-import de.debuglevel.monitoring.SummaryMonitor
+import de.debuglevel.monitoring.ServiceState
+import de.debuglevel.monitoring.StateChecker
 import mu.KotlinLogging
 import spark.Spark.path
 import spark.Spark.post
 import spark.kotlin.delete
 import spark.kotlin.get
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.concurrent.thread
-
 
 /**
  * REST endpoint
@@ -20,14 +22,29 @@ import kotlin.concurrent.thread
 class RestEndpoint {
     private val logger = KotlinLogging.logger {}
 
+    val stateChecker = StateChecker
+
+    private fun ServiceState?.stateToString(): String {
+        return when (this) {
+            ServiceState.Up -> "[ UP ]"
+            ServiceState.Down -> "[DOWN]"
+            else -> "[ ?? ]"
+        }
+    }
+
+    private fun LocalDateTime?.toLastSeenString(): String {
+        return if (this != null) {
+            this.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH))
+        } else {
+            "never"
+        }
+    }
+
     /**
-     * Starts the REST endpoint to enter a listening state
+     * Starts the REST endpoint to enter a listening serviceState
      *
      * @param args parameters to be passed from main() command line
      */
-
-    val summaryMonitor = SummaryMonitor
-
     fun start(args: Array<String>) {
         logger.info("Starting...")
         configuredPort()
@@ -35,8 +52,10 @@ class RestEndpoint {
 
         thread {
             while (true) {
-                summaryMonitor.checkAll()
-                Thread.sleep(60000)
+                stateChecker.checkAll()
+                val sleepTime = 60_000L
+                logger.info { "Sleeping for ${sleepTime}ms" }
+                Thread.sleep(sleepTime)
             }
         }
 
@@ -44,18 +63,16 @@ class RestEndpoint {
         {
             path("/monitoring") {
                 get("/") {
-                    val monitorings = summaryMonitor.monitorings
+                    val monitorings = stateChecker.getMonitorings()
 
-                    if (request.contentType() == "text/plain")
-                    {
+                    if (request.contentType() == "text/plain") {
                         type(contentType = "text/plain")
                         monitorings
-                                .find()
+                                .asSequence()
                                 .sortedBy { it.url }
-                                .map { "${it.state}\t${it.lastSeenString}\t${it.url}" }.joinToString("\n")
-                    }
-                    else
-                    {
+                                .map { "${it.serviceState.stateToString()}\t${it.lastSeen?.toLastSeenString()}\t${it.url}" }
+                                .joinToString("\n")
+                    } else {
                         type(contentType = "application/json")
                         GsonBuilder()
                                 .setPrettyPrinting()
@@ -65,23 +82,17 @@ class RestEndpoint {
                 }
 
                 post("/") { req, res ->
-                    val url = if (req.contentType() == "text/plain")
-                    {
+                    val url = if (req.contentType() == "text/plain") {
                         req.body()
-                    }else{
+                    } else {
                         throw Exception("Content-Type ${req.contentType()} not supported.")
                     }
 
-                    if (!summaryMonitor.monitorings.find().any { it.url == url })
-                    {
-                        val id = summaryMonitor.getNextMonitoringId()
-                        val monitoring = Monitoring(id, url)
-                        //summaryMonitor.monitorings.put(id, monitoring)
-                        summaryMonitor.addMonitoring(monitoring)
-
+                    try {
+                        val monitoring = stateChecker.addMonitoring(url)
                         res.status(201)
-                        id
-                    }else{
+                        monitoring.id
+                    } catch (e: StateChecker.MonitoringAlreadyExistsException) {
                         res.status(409)
                         "already exists"
                     }
@@ -89,11 +100,12 @@ class RestEndpoint {
 
                 delete("/:id") {
                     val id = request.params("id").toInt()
-                    //if (summaryMonitor.monitorings.remove(id) != null) {
-                    if (summaryMonitor.removeMonitoring(id)) {
+
+                    try {
+                        stateChecker.removeMonitoring(id)
                         response.status(201)
                         "removed"
-                    }else{
+                    } catch (e: StateChecker.MonitoringNotFoundException) {
                         response.status(404)
                         "not found"
                     }
