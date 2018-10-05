@@ -1,10 +1,8 @@
 package de.debuglevel.monitoring
 
-import khttp.get
 import mu.KotlinLogging
-import java.io.OutputStream
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.UnknownHostException
 
 
 class HttpMonitor : Monitor {
@@ -12,14 +10,21 @@ class HttpMonitor : Monitor {
 
     override fun check(monitoring: Monitoring): Boolean {
         val url = monitoring.uri.toURL()
-        val connection = url.openConnection() as HttpURLConnection
-        TrustModifier.relaxHostChecking(connection); // here's where the magic happens
 
-        //connection.setDoOutput(true);
-        val statusCode = connection.responseCode
+        val success = try {
+            val connection = url.openConnection() as HttpURLConnection
+            TrustModifier.relaxHostChecking(connection)
+            val statusCode = connection.responseCode
 
+            (statusCode < 400)
+        } catch (e: UnknownHostException) {
+            false
+        } catch (e: Exception) {
+            logger.warn { "Unhandled exception: $e" }
+            false
+        }
 
-        return (statusCode < 400)
+        return success
     }
 
 }
