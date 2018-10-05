@@ -3,6 +3,7 @@ package de.debuglevel.monitoring.monitors
 import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
 import mu.KotlinLogging
+import java.net.ConnectException
 import java.net.Socket
 import java.net.UnknownHostException
 
@@ -23,6 +24,8 @@ class TcpMonitor : Monitor {
                 ServiceState.Up
             }
         } catch (e: UnknownHostException) {
+            ServiceState.Down
+        } catch (e: ConnectException) {
             ServiceState.Down
         } catch (e: Exception) {
             logger.warn { "Unhandled exception: $e" }
