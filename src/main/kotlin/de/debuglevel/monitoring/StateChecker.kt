@@ -57,7 +57,7 @@ object StateChecker {
      */
     fun removeMonitoring(id: Int) {
         logger.debug { "Removing $id..." }
-        if (!monitorings.find(Monitoring::id eq id).any()) {
+        if (monitorings.find(Monitoring::id eq id).any()) {
             val result = monitorings.deleteMany(Monitoring::id eq id)
             if (result.deletedCount <= 0) {
                 logger.debug { "Removing monitoring with $id did not succeed." }
