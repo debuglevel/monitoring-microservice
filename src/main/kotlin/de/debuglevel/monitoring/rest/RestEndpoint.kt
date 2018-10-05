@@ -49,8 +49,8 @@ class RestEndpoint {
                     if (request.contentType() == "text/plain")
                     {
                         type(contentType = "text/plain")
-                        monitorings.entries
-                                .map { it.value }
+                        monitorings
+                                .find()
                                 .sortedBy { it.url }
                                 .map { "${it.state}\t${it.lastSeenString}\t${it.url}" }.joinToString("\n")
                     }
@@ -72,11 +72,12 @@ class RestEndpoint {
                         throw Exception("Content-Type ${req.contentType()} not supported.")
                     }
 
-                    if (!summaryMonitor.monitorings.any { it.value.url == url })
+                    if (!summaryMonitor.monitorings.find().any { it.url == url })
                     {
                         val id = summaryMonitor.getNextMonitoringId()
                         val monitoring = Monitoring(id, url)
-                        summaryMonitor.monitorings.put(id, monitoring)
+                        //summaryMonitor.monitorings.put(id, monitoring)
+                        summaryMonitor.addMonitoring(monitoring)
 
                         res.status(201)
                         id
@@ -88,7 +89,8 @@ class RestEndpoint {
 
                 delete("/:id") {
                     val id = request.params("id").toInt()
-                    if (summaryMonitor.monitorings.remove(id) != null) {
+                    //if (summaryMonitor.monitorings.remove(id) != null) {
+                    if (summaryMonitor.removeMonitoring(id)) {
                         response.status(201)
                         "removed"
                     }else{

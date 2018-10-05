@@ -74,7 +74,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.4'
 
     // Database
-    compile 'org.mapdb:mapdb:3.0.7'
+    //compile 'org.mapdb:mapdb:3.0.7'
+    compile 'org.litote.kmongo:kmongo:3.8.3'
 }
 
 // jar configuration is still needed (despite of application plugin) to add Manifest to traditional jar

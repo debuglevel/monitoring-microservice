@@ -1,20 +1,39 @@
 package de.debuglevel.monitoring
 
+import com.mongodb.client.MongoCollection
 import mu.KotlinLogging
-import org.mapdb.DBMaker
-import org.mapdb.Serializer
+import org.litote.kmongo.KMongo
+import org.litote.kmongo.eq
+import org.litote.kmongo.getCollection
 import java.time.LocalDateTime
 
 object SummaryMonitor {
     private val logger = KotlinLogging.logger {}
 
-    val monitorings = mutableMapOf<Int,Monitoring>()
+    val monitorings: MongoCollection<Monitoring>
 
-    fun getNextMonitoringId() = monitorings.keys.max()?.plus(1) ?: 1
+    fun getNextMonitoringId() = monitorings.find().map{ it.id }.max()?.plus(1) ?: 1
+
+    init {
+        val mongoClient = KMongo.createClient(Configuration.mongodbUrl)
+        val database = mongoClient.getDatabase("monitoring")
+        monitorings = database.getCollection<Monitoring>()
+    }
+
+    fun addMonitoring(monitoring: Monitoring)
+    {
+        monitorings.insertOne(monitoring)
+    }
+
+    fun removeMonitoring(id: Int): Boolean
+    {
+        val result = monitorings.deleteOne(Monitoring::id eq id)
+        return result.deletedCount >= 1
+    }
 
     fun checkAll() {
         logger.debug { "Checking all monitorings..." }
-        monitorings.forEach { check(it.value) }
+        monitorings.find().forEach { check(it) }
         logger.debug { "Checking all monitorings done" }
     }
 
