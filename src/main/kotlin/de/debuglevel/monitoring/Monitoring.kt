@@ -11,6 +11,9 @@ data class Monitoring (val id: Int, val url: String) {
 
     var lastCheckOkay: Boolean? = null
 
+    val _id
+        get() = id
+
     val state: String
     get() {
         return when (lastCheckOkay)
