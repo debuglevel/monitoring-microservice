@@ -8,8 +8,11 @@ import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.StateChecker
 import mu.KotlinLogging
+import spark.Request
+import spark.Response
 import spark.Spark.path
 import spark.Spark.post
+import spark.kotlin.RouteHandler
 import spark.kotlin.delete
 import spark.kotlin.get
 import java.time.LocalDateTime
@@ -71,61 +74,79 @@ class RestEndpoint {
         apiVersion("1", true)
         {
             path("/monitoring") {
-                get("/") {
-                    val monitorings = stateChecker.getMonitorings()
+                val monitorings = stateChecker.getMonitorings()
 
-                    if (request.headers("Accept").contains("text/plain")) {
-                        logger.debug { "Processing GET request for text/plain..." }
-                        type(contentType = "text/plain")
-                        monitorings
-                                .asSequence()
-                                .sortedBy { it.url }
-                                .map { "${it.serviceState.toPlaintextString()}\t${it.lastSeen?.toLastSeenString()}\t${it.url}" }
-                                .joinToString("\n")
-                    } else if (request.headers("Accept").contains("text/html")) {
-                        logger.debug { "Processing GET request for text/html..." }
-                        type(contentType = "text/html")
-                        buildHtml(monitorings)
-                    } else {
-                        logger.debug { "Processing GET request as application/json..." }
-                        type(contentType = "application/json")
-                        GsonBuilder()
-                                .setPrettyPrinting()
-                                .create()
-                                .toJson(monitorings)
-                    }
-                }
-
-                post("/") { req, res ->
-                    val url = if (req.contentType() == "text/plain") {
-                        req.body()
-                    } else {
-                        throw Exception("Content-Type ${req.contentType()} not supported.")
-                    }
-
-                    try {
-                        val monitoring = stateChecker.addMonitoring(url)
-                        res.status(201)
-                        monitoring.id
-                    } catch (e: StateChecker.MonitoringAlreadyExistsException) {
-                        res.status(409)
-                        "already exists"
-                    }
-                }
-
-                delete("/:id") {
-                    val id = request.params("id").toInt()
-
-                    try {
-                        stateChecker.removeMonitoring(id)
-                        response.status(201)
-                        "removed"
-                    } catch (e: StateChecker.MonitoringNotFoundException) {
-                        response.status(404)
-                        "not found"
-                    }
-                }
+                get("/", "text/plain", processGetPlaintext(monitorings))
+                get("/", "text/html", processGetHtml(monitorings))
+                get("/", function = processGetJson(monitorings))
+                post("/", processPost())
+                delete("/:id", function = processDelete())
             }
+        }
+    }
+
+    private fun processPost(): (Request, Response) -> Any {
+        return { req, res ->
+            val url = if (req.contentType() == "text/plain") {
+                req.body()
+            } else {
+                throw Exception("Content-Type ${req.contentType()} not supported.")
+            }
+
+            try {
+                val monitoring = stateChecker.addMonitoring(url)
+                res.status(201)
+                monitoring.id
+            } catch (e: StateChecker.MonitoringAlreadyExistsException) {
+                res.status(409)
+                "already exists"
+            }
+        }
+    }
+
+    private fun processDelete(): RouteHandler.() -> String {
+        return {
+            val id = request.params("id").toInt()
+
+            try {
+                stateChecker.removeMonitoring(id)
+                response.status(201)
+                "removed"
+            } catch (e: StateChecker.MonitoringNotFoundException) {
+                response.status(404)
+                "not found"
+            }
+        }
+    }
+
+    private fun processGetJson(monitorings: Set<Monitoring>): RouteHandler.() -> String {
+        return {
+            logger.debug { "Processing GET request as application/json..." }
+            type(contentType = "application/json")
+            GsonBuilder()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(monitorings)
+        }
+    }
+
+    private fun processGetHtml(monitorings: Set<Monitoring>): RouteHandler.() -> String {
+        return {
+            logger.debug { "Processing GET request for text/html..." }
+            type(contentType = "text/html")
+            buildHtml(monitorings)
+        }
+    }
+
+    private fun processGetPlaintext(monitorings: Set<Monitoring>): RouteHandler.() -> String {
+        return {
+            logger.debug { "Processing GET request for text/plain..." }
+            type(contentType = "text/plain")
+            monitorings
+                    .asSequence()
+                    .sortedBy { it.url }
+                    .map { "${it.serviceState.toPlaintextString()}\t${it.lastSeen?.toLastSeenString()}\t${it.url}" }
+                    .joinToString("\n")
         }
     }
 
