@@ -1,4 +1,4 @@
-package de.debuglevel.monitoring.transformers
+package de.debuglevel.monitoring.rest.transformers
 
 import com.google.gson.GsonBuilder
 import mu.KotlinLogging
