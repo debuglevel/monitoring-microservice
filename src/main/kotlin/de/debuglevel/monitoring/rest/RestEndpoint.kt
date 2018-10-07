@@ -7,6 +7,7 @@ import de.debuglevel.microservices.utils.status.status
 import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.StateChecker
+import de.debuglevel.monitoring.transformers.JsonTransformer
 import mu.KotlinLogging
 import spark.Spark.path
 import spark.kotlin.RouteHandler
@@ -121,10 +122,7 @@ class RestEndpoint {
         return {
             logger.debug { "Processing GET request as application/json..." }
             type(contentType = "application/json")
-            GsonBuilder()
-                    .setPrettyPrinting()
-                    .create()
-                    .toJson(monitorings)
+            JsonTransformer.render(monitorings)
         }
     }
 
