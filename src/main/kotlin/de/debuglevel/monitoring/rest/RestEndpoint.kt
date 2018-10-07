@@ -8,8 +8,6 @@ import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.StateChecker
 import mu.KotlinLogging
-import spark.Request
-import spark.Response
 import spark.Spark.path
 import spark.kotlin.RouteHandler
 import spark.kotlin.delete
