@@ -11,10 +11,10 @@ import mu.KotlinLogging
 import spark.Request
 import spark.Response
 import spark.Spark.path
-import spark.Spark.post
 import spark.kotlin.RouteHandler
 import spark.kotlin.delete
 import spark.kotlin.get
+import spark.kotlin.post
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -79,26 +79,26 @@ class RestEndpoint {
                 get("/", "text/plain", processGetPlaintext(monitorings))
                 get("/", "text/html", processGetHtml(monitorings))
                 get("/", function = processGetJson(monitorings))
-                post("/", processPost())
+                post("/", function = processPost())
                 delete("/:id", function = processDelete())
             }
         }
     }
 
-    private fun processPost(): (Request, Response) -> Any {
-        return { req, res ->
-            val url = if (req.contentType() == "text/plain") {
-                req.body()
+    private fun processPost(): RouteHandler.() -> Any {
+        return {
+            val url = if (request.contentType() == "text/plain") {
+                request.body()
             } else {
-                throw Exception("Content-Type ${req.contentType()} not supported.")
+                throw Exception("Content-Type ${request.contentType()} not supported.")
             }
 
             try {
                 val monitoring = stateChecker.addMonitoring(url)
-                res.status(201)
+                response.status(201)
                 monitoring.id
             } catch (e: StateChecker.MonitoringAlreadyExistsException) {
-                res.status(409)
+                response.status(409)
                 "already exists"
             }
         }
