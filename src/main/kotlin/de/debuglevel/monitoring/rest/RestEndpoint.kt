@@ -3,8 +3,6 @@ package de.debuglevel.monitoring.rest
 import de.debuglevel.microservices.utils.apiversion.apiVersion
 import de.debuglevel.microservices.utils.spark.configuredPort
 import de.debuglevel.microservices.utils.status.status
-import de.debuglevel.monitoring.StateChecker
-import de.debuglevel.monitoring.rest.MonitoringController.stateChecker
 import mu.KotlinLogging
 import spark.Spark.path
 import spark.kotlin.delete

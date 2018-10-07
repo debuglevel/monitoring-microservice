@@ -76,6 +76,9 @@ dependencies {
     // Database
     //compile 'org.mapdb:mapdb:3.0.7'
     compile 'org.litote.kmongo:kmongo:3.8.3'
+
+    // Template Engine
+    compile 'com.sparkjava:spark-template-mustache:2.7.1'
 }
 
 // jar configuration is still needed (despite of application plugin) to add Manifest to traditional jar

@@ -1,6 +1,5 @@
 package de.debuglevel.monitoring.rest
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.StateChecker
 import de.debuglevel.monitoring.rest.transformers.JsonTransformer
 import de.debuglevel.monitoring.rest.transformers.MonitoringsTransformer
