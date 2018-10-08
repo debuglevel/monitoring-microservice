@@ -40,10 +40,16 @@ object StateChecker {
     fun addMonitoring(url: String): Monitoring {
         logger.debug { "Adding $url..." }
         if (!monitorings.find(Monitoring::url eq url).any()) {
-            val monitoring = Monitoring(this.nextMonitoringId, url)
-            monitorings.insertOne(monitoring)
-            logger.debug { "Adding $url done" }
-            return monitoring
+            if (Monitor.get(url).isValid(url))
+            {
+                val monitoring = Monitoring(this.nextMonitoringId, url)
+                monitorings.insertOne(monitoring)
+                logger.debug { "Adding $url done" }
+                return monitoring
+            }else{
+                logger.debug { "Adding $url failed as URL is invalid." }
+                throw InvalidMonitoringFormatException(url)
+            }
         } else {
             logger.debug { "Monitoring $url not added, as it does already exist." }
             throw MonitoringAlreadyExistsException(url)
@@ -51,6 +57,7 @@ object StateChecker {
     }
 
     class MonitoringAlreadyExistsException(url: String) : Exception("Monitoring with URL '$url' already exists.")
+    class InvalidMonitoringFormatException(url: String) : Exception("Monitoring with URL '$url' has an invalid format.")
 
     /**
      * Removes a monitoring if it exists.

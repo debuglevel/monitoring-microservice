@@ -5,15 +5,22 @@ import de.debuglevel.monitoring.ServiceState
 import mu.KotlinLogging
 import java.net.ConnectException
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.UnknownHostException
 
 class HttpMonitor : Monitor {
-    override fun isValid(monitoring: Monitoring): Boolean {
-        if (monitoring.uri.port < 0 || monitoring.uri.port > 65535) {
+    override fun isValid(url: String): Boolean {
+        val uri = try {
+            URI(url)
+        } catch (e: Exception) {
             return false
         }
 
-        if (monitoring.uri.scheme != "http" && monitoring.uri.scheme != "https") {
+        if (uri.port < 0 || uri.port > 65535) {
+            return false
+        }
+
+        if (uri.scheme != "http" && uri.scheme != "https") {
             return false
         }
 

@@ -1,6 +1,7 @@
 package de.debuglevel.monitoring.rest
 
 import de.debuglevel.monitoring.StateChecker
+import de.debuglevel.monitoring.monitors.Monitor
 import de.debuglevel.monitoring.rest.transformers.JsonTransformer
 import de.debuglevel.monitoring.rest.transformers.MonitoringsTransformer
 import mu.KotlinLogging
@@ -26,6 +27,15 @@ object MonitoringController {
             } catch (e: StateChecker.MonitoringAlreadyExistsException) {
                 response.status(409)
                 "already exists"
+            } catch (e: StateChecker.InvalidMonitoringFormatException) {
+                response.status(400)
+                "supplied URL is invalid: ${e.message}"
+            } catch (e: Monitor.EmptyMonitoringProtocolException) {
+                response.status(400)
+                "protocol must be supplied"
+            } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
+                response.status(400)
+                "protocol is not supported"
             }
         }
     }
