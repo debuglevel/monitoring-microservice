@@ -42,4 +42,6 @@ data class MonitoringViewModel(val monitoring: Monitoring) {
         }
 
     val url get() = monitoring.url
+
+    val id get() = monitoring.id
 }

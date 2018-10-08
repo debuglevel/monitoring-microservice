@@ -16,6 +16,7 @@
 <table class="table table-hover table-sm">
     <thead>
     <tr>
+        <th scope="col" class="id">ID</th>
         <th scope="col" class="state">State</th>
         <th scope="col" class="lastSeen">last Seen</th>
         <th scope="col" class="url">URL</th>
@@ -25,6 +26,7 @@
 
     {{#monitorings}}
     <tr class="{{serviceStateCssClass}} {{serviceStateCssTrClass}}">
+        <td class="id">{{id}}</td>
         <td class="state {{serviceStateCssId}}">{{serviceStateHtmlLabel}}</td>
         <td class="lastSeen">{{lastSeen}}</td>
         <td class="url"><a href="{{url}}">{{url}}</a></td>
