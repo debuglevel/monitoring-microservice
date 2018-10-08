@@ -24,6 +24,23 @@
                     }
                 });
             });
+
+            $('.add-monitoring').click(function (e) {
+                e.preventDefault();
+                var url = $("#url").val();
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "text/plain",
+                    data: url,
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (data) {
+                        console.log('Error:', data);
+                    }
+                });
+            });
     });
     </script>
     <style>
@@ -58,5 +75,21 @@
 
     </tbody>
 </table>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Add monitoring</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Want to monitor your own service? Great, here you go:</h6>
+        <form>
+            <div class="form-group">
+                <label for="url">URL</label>
+                <input type="text" class="form-control" id="url" placeholder="Enter URL to service">
+                <small id="urlHelp" class="form-text text-muted">URL to the service to be monitored. Must return a HTTP code less than 400 to be shown as "up". Be sure you supplied http:// or https://</small>
+            </div>
+            <button type="submit" class="btn btn-outline-primary add-monitoring">Add</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>
