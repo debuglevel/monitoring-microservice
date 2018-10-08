@@ -42,11 +42,13 @@
                 });
             });
     });
+
     </script>
     <style>
                         tr.up { background-color: #C4FEAC; }
                         tr.down { background-color: #FEACAC; }
                         tr.unknown { background-color: #EAEAEA; }
+
 
     </style>
 </head>
@@ -64,13 +66,15 @@
     <tbody>
 
     {{#monitorings}}
-    <tr class="{{serviceStateCssClass}} {{serviceStateCssTrClass}}">
-        <td class="actions"><button class="btn btn-outline-danger btn-sm btn-delete delete-monitoring" value="{{id}}">❌️</button></td>
-        <td class="id">{{id}}</td>
-        <td class="state {{serviceStateCssId}}">{{serviceStateHtmlLabel}}</td>
-        <td class="lastSeen">{{lastSeen}}</td>
-        <td class="url"><a href="{{url}}">{{url}}</a></td>
-    </tr>
+        <tr class="{{serviceStateCssClass}} {{serviceStateCssTrClass}}">
+            <td class="actions">
+                <button class="btn btn-outline-danger btn-sm btn-delete delete-monitoring" value="{{id}}">❌️</button>
+            </td>
+            <td class="id">{{id}}</td>
+            <td class="state {{serviceStateCssId}}">{{serviceStateHtmlLabel}}</td>
+            <td class="lastSeen">{{lastSeen}}</td>
+            <td class="url"><a href="{{url}}">{{url}}</a></td>
+        </tr>
     {{/monitorings}}
 
     </tbody>
@@ -84,7 +88,9 @@
             <div class="form-group">
                 <label for="url">URL</label>
                 <input type="text" class="form-control" id="url" placeholder="Enter URL to service">
-                <small id="urlHelp" class="form-text text-muted">URL to the service to be monitored. Must return a HTTP code less than 400 to be shown as "up". Be sure you supplied http:// or https://</small>
+                <small id="urlHelp" class="form-text text-muted">URL to the service to be monitored. Must return a HTTP
+                    code less than 400 to be shown as "up". Be sure you supplied http:// or https://
+                </small>
             </div>
             <button type="submit" class="btn btn-outline-primary add-monitoring">Add</button>
         </form>
