@@ -19,7 +19,9 @@ object MonitoringsTransformer {
 
     fun toHtml(monitorings: Set<Monitoring>): String {
         val model = HashMap<String, Any>()
-        model["monitorings"] = monitorings.map { MonitoringViewModel(it) }
+        model["monitorings"] = monitorings
+                .sortedBy { it.uri.host }
+                .map { MonitoringViewModel(it) }
 
         return MustacheTemplateEngine().render(ModelAndView(model, "monitoring/list.html.mustache"))
     }
