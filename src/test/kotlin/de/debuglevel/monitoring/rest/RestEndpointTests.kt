@@ -1,13 +1,6 @@
 package de.debuglevel.monitoring.rest
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
-import spark.Spark.awaitInitialization
-import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RestEndpointTests {
@@ -35,8 +28,8 @@ class RestEndpointTests {
 //    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //    inner class `valid requests on greet` {
 //        @ParameterizedTest
-//        @MethodSource("validNameProvider")
-//        fun `server sends greeting in body`(testData: NameTestData) {
+//        @MethodSource("validUrlsProvider")
+//        fun `server sends greeting in body`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -47,8 +40,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("validNameProvider")
-//        fun `server sends correct greeting on api version 2 and default`(testData: NameTestData) {
+//        @MethodSource("validUrlsProvider")
+//        fun `server sends correct greeting on api version 2 and default`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -62,7 +55,7 @@ class RestEndpointTests {
 //
 //        @ParameterizedTest
 //        @MethodSource("validNameProviderApiV1")
-//        fun `server sends correct greeting on api version 1`(testData: NameTestData) {
+//        fun `server sends correct greeting on api version 1`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -73,8 +66,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("validNameProvider")
-//        fun `server sends status code 200`(testData: NameTestData) {
+//        @MethodSource("validUrlsProvider")
+//        fun `server sends status code 200`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -85,8 +78,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("validNameProvider")
-//        fun `server sends json content type`(testData: NameTestData) {
+//        @MethodSource("validUrlsProvider")
+//        fun `server sends json content type`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -97,8 +90,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("validNameProvider")
-//        fun `server sends json content`(testData: NameTestData) {
+//        @MethodSource("validUrlsProvider")
+//        fun `server sends json content`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -109,20 +102,20 @@ class RestEndpointTests {
 //            assertThat(validJson).isTrue()
 //        }
 //
-//        fun validNameProvider() = Stream.of(
-//                NameTestData(value = "Mozart", expected = "Hello, Mozart!"),
-//                NameTestData(value = "Amadeus", expected = "Hello, Amadeus!"),
+//        fun validUrlsProvider() = Stream.of(
+//                UrlTestData(value = "Mozart", expected = "Hello, Mozart!"),
+//                UrlTestData(value = "Amadeus", expected = "Hello, Amadeus!"),
 //                // TODO: Umlauts do not work when executed as gradle task in Windows
-////                NameTestData(value = "H%C3%A4nschen", expected = "Hello, Hänschen!"),
-//                NameTestData(value = "Max%20Mustermann", expected = "Hello, Max Mustermann!")
+////                UrlTestData(value = "H%C3%A4nschen", expected = "Hello, Hänschen!"),
+//                UrlTestData(value = "Max%20Mustermann", expected = "Hello, Max Mustermann!")
 //        )
 //
 //        fun validNameProviderApiV1() = Stream.of(
-//                NameTestData(value = "Mozart", expected = "Hello from API v1, Mozart!"),
-//                NameTestData(value = "Amadeus", expected = "Hello from API v1, Amadeus!"),
+//                UrlTestData(value = "Mozart", expected = "Hello from API v1, Mozart!"),
+//                UrlTestData(value = "Amadeus", expected = "Hello from API v1, Amadeus!"),
 //                // TODO: Umlauts do not work when executed as gradle task in Windows
-////                NameTestData(value = "H%C3%A4nschen", expected = "Hello, Hänschen!"),
-//                NameTestData(value = "Max%20Mustermann", expected = "Hello from API v1, Max Mustermann!")
+////                UrlTestData(value = "H%C3%A4nschen", expected = "Hello, Hänschen!"),
+//                UrlTestData(value = "Max%20Mustermann", expected = "Hello from API v1, Max Mustermann!")
 //        )
 //    }
 //
@@ -130,8 +123,8 @@ class RestEndpointTests {
 //    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //    inner class `invalid requests on greet` {
 //        @ParameterizedTest
-//        @MethodSource("invalidNameProvider")
-//        fun `server does not send greeting in body`(testData: NameTestData) {
+//        @MethodSource("invalidUrlsProvider")
+//        fun `server does not send greeting in body`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -142,8 +135,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("invalidNameProvider")
-//        fun `server sends error message`(testData: NameTestData) {
+//        @MethodSource("invalidUrlsProvider")
+//        fun `server sends error message`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -154,8 +147,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("invalidNameProvider")
-//        fun `server sends status code 400`(testData: NameTestData) {
+//        @MethodSource("invalidUrlsProvider")
+//        fun `server sends status code 400`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -166,8 +159,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("invalidNameProvider")
-//        fun `server sends json content type`(testData: NameTestData) {
+//        @MethodSource("invalidUrlsProvider")
+//        fun `server sends json content type`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -178,8 +171,8 @@ class RestEndpointTests {
 //        }
 //
 //        @ParameterizedTest
-//        @MethodSource("invalidNameProvider")
-//        fun `server sends json content`(testData: NameTestData) {
+//        @MethodSource("invalidUrlsProvider")
+//        fun `server sends json content`(testData: UrlTestData) {
 //            // Arrange
 //
 //            // Act
@@ -190,13 +183,13 @@ class RestEndpointTests {
 //            assertThat(validJson).isTrue()
 //        }
 //
-//        fun invalidNameProvider() = Stream.of(
-//                //NameTestData(value = ""),
-//                NameTestData(value = "%20")
+//        fun invalidUrlsProvider() = Stream.of(
+//                //UrlTestData(value = ""),
+//                UrlTestData(value = "%20")
 //        )
 //    }
 //
-//    data class NameTestData(
+//    data class UrlTestData(
 //            val value: String,
 //            val expected: String? = null
 //    )

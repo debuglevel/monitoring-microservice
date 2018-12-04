@@ -9,9 +9,9 @@ import java.net.URI
 import java.net.UnknownHostException
 
 class TcpMonitor : Monitor {
-    override fun isValid(url: String): Boolean {
+    override fun isValid(urlString: String): Boolean {
         val uri = try {
-            URI(url)
+            URI(urlString)
         } catch (e: Exception) {
             return false
         }

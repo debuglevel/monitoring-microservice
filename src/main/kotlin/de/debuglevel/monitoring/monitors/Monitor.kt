@@ -13,7 +13,7 @@ interface Monitor {
     /**
      * Whether a monitoring has a valid format
      */
-    fun isValid(url: String): Boolean
+    fun isValid(urlString: String): Boolean
 
     companion object {
         /**
@@ -41,6 +41,6 @@ interface Monitor {
         fun get(monitoring: Monitoring) = get(monitoring.uri)
     }
 
-    class EmptyMonitoringProtocolException() : Exception("Protocol must not be empty.")
+    class EmptyMonitoringProtocolException : Exception("Protocol must not be empty.")
     class UnsupportedMonitoringProtocolException(scheme: String) : Exception("Protocol '$scheme' is not supported.")
 }
