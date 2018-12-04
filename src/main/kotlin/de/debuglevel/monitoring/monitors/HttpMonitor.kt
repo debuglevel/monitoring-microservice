@@ -9,25 +9,30 @@ import java.net.URI
 import java.net.UnknownHostException
 
 class HttpMonitor : Monitor {
+    private val logger = KotlinLogging.logger {}
+
     override fun isValid(url: String): Boolean {
+        logger.debug { "Checking validity of URL '$url'..." }
         val uri = try {
             URI(url)
         } catch (e: Exception) {
+            logger.debug(e) { "Checking validity of URL '$url' failed with exception." }
             return false
         }
 
         if (uri.port < 0 || uri.port > 65535) {
+            logger.debug { "Checking validity of URL '$url' failed with port '$uri.port' too small or too large." }
             return false
         }
 
         if (uri.scheme != "http" && uri.scheme != "https") {
+            logger.debug { "Checking validity of URL '$url' failed with scheme '$uri.scheme' != http or != https." }
             return false
         }
 
+        logger.debug { "Checking validity of URL '$url' succeeded." }
         return true
     }
-
-    private val logger = KotlinLogging.logger {}
 
     override fun check(monitoring: Monitoring): ServiceState {
         val url = monitoring.uri.toURL()
