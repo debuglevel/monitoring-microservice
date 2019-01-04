@@ -1,5 +1,6 @@
 package de.debuglevel.monitoring.rest
 
+import com.google.gson.Gson
 import de.debuglevel.monitoring.StateChecker
 import de.debuglevel.monitoring.monitors.Monitor
 import de.debuglevel.monitoring.rest.transformers.JsonTransformer
@@ -14,14 +15,14 @@ object MonitoringController {
 
     fun postOne(): RouteHandler.() -> Any {
         return {
-            val url = if (request.contentType() == "text/plain") {
-                request.body()
+            val monitoringDto = if (request.contentType() == "application/json") {
+                Gson().fromJson(request.body(), MonitoringDTO::class.java)
             } else {
                 throw Exception("Content-Type ${request.contentType()} not supported.")
             }
 
             try {
-                val monitoring = stateChecker.addMonitoring(url)
+                val monitoring = stateChecker.addMonitoring(monitoringDto)
                 response.status(201)
                 monitoring.id
             } catch (e: StateChecker.MonitoringAlreadyExistsException) {

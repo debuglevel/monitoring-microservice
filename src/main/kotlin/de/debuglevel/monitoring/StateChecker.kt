@@ -2,6 +2,7 @@ package de.debuglevel.monitoring
 
 import com.mongodb.client.MongoCollection
 import de.debuglevel.monitoring.monitors.Monitor
+import de.debuglevel.monitoring.rest.MonitoringDTO
 import mu.KotlinLogging
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.eq
@@ -37,22 +38,22 @@ object StateChecker {
     /**
      * Adds a monitoring if it does not already exist.
      */
-    fun addMonitoring(url: String): Monitoring {
-        logger.debug { "Adding $url..." }
-        if (!monitorings.find(Monitoring::url eq url).any()) {
-            if (Monitor.get(url).isValid(url))
+    fun addMonitoring(monitoringDto: MonitoringDTO): Monitoring {
+        logger.debug { "Adding $monitoringDto..." }
+        if (!monitorings.find(Monitoring::url eq monitoringDto.url).any()) {
+            if (Monitor.get(monitoringDto.url).isValid(monitoringDto.url))
             {
-                val monitoring = Monitoring(this.nextMonitoringId, url)
+                val monitoring = Monitoring(this.nextMonitoringId, monitoringDto.url, monitoringDto.name)
                 monitorings.insertOne(monitoring)
-                logger.debug { "Adding $url done" }
+                logger.debug { "Adding $monitoringDto done" }
                 return monitoring
             }else{
-                logger.debug { "Adding $url failed as URL is invalid." }
-                throw InvalidMonitoringFormatException(url)
+                logger.debug { "Adding $monitoringDto failed as URL is invalid." }
+                throw InvalidMonitoringFormatException(monitoringDto.url)
             }
         } else {
-            logger.debug { "Monitoring $url not added, as it does already exist." }
-            throw MonitoringAlreadyExistsException(url)
+            logger.debug { "Monitoring $monitoringDto not added, as it does already exist." }
+            throw MonitoringAlreadyExistsException(monitoringDto.url)
         }
     }
 

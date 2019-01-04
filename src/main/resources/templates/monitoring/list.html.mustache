@@ -28,11 +28,14 @@
             $('.add-monitoring').click(function (e) {
                 e.preventDefault();
                 var url = $("#url").val();
+                var name = $("#name").val();
+                var monitoring = { "name": name, "url": url };
+                var json = JSON.stringify(monitoring)
 
                 $.ajax({
                     type: "POST",
-                    contentType: "text/plain",
-                    data: url,
+                    contentType: "application/json",
+                    data: json,
                     success: function (data) {
                         console.log(data);
                     },
@@ -60,6 +63,7 @@
         <th scope="col" class="id">ID</th>
         <th scope="col" class="state">State</th>
         <th scope="col" class="lastSeen">last Seen</th>
+        <th scope="col" class="name">Name</th>
         <th scope="col" class="url">URL</th>
     </tr>
     </thead>
@@ -73,6 +77,7 @@
             <td class="id">{{id}}</td>
             <td class="state {{serviceStateCssId}}">{{serviceStateHtmlLabel}}</td>
             <td class="lastSeen">{{lastSeen}}</td>
+            <td class="url">{{name}}</td>
             <td class="url"><a href="{{url}}">{{url}}</a></td>
         </tr>
     {{/monitorings}}
@@ -86,10 +91,18 @@
         <h6 class="card-subtitle mb-2 text-muted">Want to monitor your own service? Great, here you go:</h6>
         <form>
             <div class="form-group">
+                <label for="url">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="MSSQL server (RDP)">
+                <small id="nameHelp" class="form-text text-muted">Descriptive name to the service to be monitored. The
+                    list is ordered by this name.
+                </small>
+            </div>
+            <div class="form-group">
                 <label for="url">URL</label>
-                <input type="text" class="form-control" id="url" placeholder="Enter URL to service">
+                <input type="text" class="form-control" id="url" placeholder="tcp://sqlserver.mydomain.example:3389">
                 <small id="urlHelp" class="form-text text-muted">URL to the service to be monitored. Must return a HTTP
-                    code less than 400 to be shown as "up". Be sure you supplied http:// or https://
+                    code less than 400 to be shown as "up". Be sure you prefixed it with http://, https:// or tcp://. In
+                    case of tcp://, you have also to specify a port.
                 </small>
             </div>
             <button type="submit" class="btn btn-outline-primary add-monitoring">Add</button>

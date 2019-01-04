@@ -3,7 +3,7 @@ package de.debuglevel.monitoring
 import java.net.URI
 import java.time.LocalDateTime
 
-data class Monitoring(val id: Int, val url: String) {
+data class Monitoring(val id: Int, val url: String, val name: String? = "") {
     /**
      * Last known serviceState of the service
      */
