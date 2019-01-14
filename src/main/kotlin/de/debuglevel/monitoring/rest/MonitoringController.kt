@@ -41,6 +41,36 @@ object MonitoringController {
         }
     }
 
+    fun putOne(): RouteHandler.() -> Any {
+        return {
+            val id = request.params("id").toInt()
+
+            val monitoringDto = if (request.contentType() == "application/json") {
+                Gson().fromJson(request.body(), MonitoringDTO::class.java)
+            } else {
+                throw Exception("Content-Type ${request.contentType()} not supported.")
+            }
+
+            try {
+                val monitoring = stateChecker.updateMonitoring(id, monitoringDto)
+                response.status(201)
+                monitoring.id
+            } catch (e: StateChecker.MonitoringNotFoundException) {
+                response.status(404)
+                "not found"
+            } catch (e: StateChecker.InvalidMonitoringFormatException) {
+                response.status(400)
+                "supplied URL is invalid: ${e.message}"
+            } catch (e: Monitor.EmptyMonitoringProtocolException) {
+                response.status(400)
+                "protocol must be supplied"
+            } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
+                response.status(400)
+                "protocol is not supported"
+            }
+        }
+    }
+
     fun deleteOne(): RouteHandler.() -> String {
         return {
             val id = request.params("id").toInt()

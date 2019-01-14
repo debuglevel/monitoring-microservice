@@ -4,10 +4,7 @@ import com.mongodb.client.MongoCollection
 import de.debuglevel.monitoring.monitors.Monitor
 import de.debuglevel.monitoring.rest.MonitoringDTO
 import mu.KotlinLogging
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.eq
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.updateOne
+import org.litote.kmongo.*
 import java.time.LocalDateTime
 
 object StateChecker {
@@ -54,6 +51,29 @@ object StateChecker {
         } else {
             logger.debug { "Monitoring $monitoringDto not added, as it does already exist." }
             throw MonitoringAlreadyExistsException(monitoringDto.url)
+        }
+    }
+
+    /**
+     * Updates a monitoring if it does already exist.
+     */
+    fun updateMonitoring(id: Int, monitoringDto: MonitoringDTO): Monitoring {
+        logger.debug { "Updating $id with $monitoringDto..." }
+        val monitoring = monitorings.findOne(Monitoring::id eq id)
+        if (monitoring != null) {
+            if (Monitor.get(monitoringDto.url).isValid(monitoringDto.url)) {
+                monitoring.name = monitoringDto.name
+                monitoring.url = monitoringDto.url
+                monitorings.updateOne(monitoring)
+                logger.debug { "Updating $id done" }
+                return monitoring
+            } else {
+                logger.debug { "Updating $id failed as URL is invalid." }
+                throw InvalidMonitoringFormatException(monitoringDto.url)
+            }
+        } else {
+            logger.debug { "Monitoring $monitoringDto not updated, as it does not exist." }
+            throw MonitoringNotFoundException(id)
         }
     }
 

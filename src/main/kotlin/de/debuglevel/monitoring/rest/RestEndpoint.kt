@@ -8,6 +8,7 @@ import spark.Spark.path
 import spark.kotlin.delete
 import spark.kotlin.get
 import spark.kotlin.post
+import spark.kotlin.put
 import kotlin.concurrent.thread
 
 /**
@@ -42,6 +43,7 @@ class RestEndpoint {
                 get("/", "text/html", MonitoringController.getAllHtml())
                 get("/", function = MonitoringController.getAllJson())
                 post("/", function = MonitoringController.postOne())
+                put("/:id", function = MonitoringController.putOne())
                 delete("/:id", function = MonitoringController.deleteOne())
             }
         }
