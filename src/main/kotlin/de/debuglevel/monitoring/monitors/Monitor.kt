@@ -29,6 +29,7 @@ interface Monitor {
                 "http" -> HttpMonitor()
                 "https" -> HttpMonitor()
                 "tcp" -> TcpMonitor()
+                "icmp" -> IcmpMonitor()
                 "" -> throw EmptyMonitoringProtocolException()
                 null -> throw EmptyMonitoringProtocolException()
                 else -> throw UnsupportedMonitoringProtocolException(uri.scheme)
