@@ -5,10 +5,7 @@ import de.debuglevel.microservices.utils.spark.configuredPort
 import de.debuglevel.microservices.utils.status.status
 import mu.KotlinLogging
 import spark.Spark.path
-import spark.kotlin.delete
-import spark.kotlin.get
-import spark.kotlin.post
-import spark.kotlin.put
+import spark.kotlin.*
 import kotlin.concurrent.thread
 
 /**
@@ -39,6 +36,10 @@ class RestEndpoint {
         apiVersion("1", true)
         {
             path("/monitoring") {
+                redirect.get("/", "/monitorings/")
+            }
+
+            path("/monitorings") {
                 get("/", "text/plain", MonitoringController.getAllPlaintext())
                 get("/", "text/html", MonitoringController.getAllHtml())
                 get("/", function = MonitoringController.getAllJson())
