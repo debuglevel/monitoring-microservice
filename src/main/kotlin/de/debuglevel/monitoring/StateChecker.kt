@@ -5,6 +5,7 @@ import de.debuglevel.monitoring.monitors.Monitor
 import de.debuglevel.monitoring.rest.MonitoringDTO
 import mu.KotlinLogging
 import org.litote.kmongo.*
+import java.net.InetAddress
 import java.time.LocalDateTime
 
 object StateChecker {
@@ -123,10 +124,19 @@ object StateChecker {
         val monitor = Monitor.get(monitoring)
         monitoring.serviceState = monitor.check(monitoring)
         monitoring.lastCheck = LocalDateTime.now()
+        monitoring.ip = resolveHostname(monitoring)
         if (monitoring.serviceState == ServiceState.Up) {
             monitoring.lastSeen = monitoring.lastCheck
         }
 
         logger.debug { "Checked $monitoring: ${monitoring.serviceState}" }
+    }
+
+    private fun resolveHostname(monitoring: Monitoring): String? {
+        return try {
+            InetAddress.getByName(monitoring.uri.host).hostAddress
+        } catch (e: java.lang.Exception) {
+            return "could not resolve"
+        }
     }
 }

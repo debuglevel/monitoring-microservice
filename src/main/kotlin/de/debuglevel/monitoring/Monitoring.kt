@@ -20,6 +20,11 @@ data class Monitoring(val id: Int, var url: String, var name: String? = "") {
     var lastCheck: LocalDateTime? = null
 
     /**
+     * The IP of the resolved hostname
+     */
+    var ip: String? = null
+
+    /**
      * ID field for MongoDB
      */
     val _id
