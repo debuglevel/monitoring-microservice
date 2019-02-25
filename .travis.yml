@@ -26,7 +26,7 @@ deploy:
 
     # Set up via https://docs.travis-ci.com/user/deployment/releases#authenticating-with-an-oauth-token; keep a copy of .travis.yml, use "travis setup releases", extract the api_key and use it in your copy of .travis.yml
     api_key:
-      secure: txPqR2Wj96buxGxm0bUIYhE0/p8R740pOunvHOs6i4E1DtS0D4rJARTM3MSRgeda7rhDMsjEdog9DOhBXT/COmhv9XN7KR/WvjhAJFmfdHoqvSBPPTmW9BbZQirpYxb0VrWbtygHAO9bAYJPN+XNm0mST22p+Pdv1LyZvGnQJK04SV+ItKh0G3aQKg3Q4I5o79a0eyRgY6WmyadPsM26W+cgQ8ah6GpSzmZkdbByC030/QG3JhPjvp0ku1B6klBiLSSzpA7BjjiTrNpvLNbXBFyDtD8ehrg77zPpnaOmChqwgYvIEaqe7mwz4sHYCc6f/ce6sHFFfCeUbbZqCe58tAmZKglljt7ZyzT/+8MuYuSm8/QS2IB/8kDrYuTDYvIIXPHlVjsWUhI5zpKfxhbhvTy/PO7WhVVPUQxjuMd4k/6b5ixCoSsJ/weYhZ8h21QNQH41HLaQ8VSMkE30c1razFCh+0IOzGGESDjTJ5eisdFKKg670ZolCZMQHtZ/avO39c3S06QiUTnCrELiGuPc/COTJR9On5B4p63S3eYWnfu2ak0+u31W72QmY3Bo+g7SIw/FkSOOBIPuI5XwlvM5HUU/6NBnDGhGRLl+bZhaevfrgzNwvo7yM9/X+/kHDh4hHPHpIcJRxfNgXwFZVlkX1VQctBIZtm6KIsh8xSar/1k=
+      secure: CLA7Wb2G3ryllmK5T31qSbfzSxqgX4JlGhvDAhTyQIspCt8iBfigoO1DJhlQSgvSBVqHgRKFkDreBkfz/gSFsf32yEwyARSkkbKP8Y+hqg6XRzYXFE1CfZ8RKE7YPG7TLX2Du1abcmFR+h4oNrmqvu3CiYqtWBqv1zcV1SxWrmENJCcAKFUW+Y5+K/iXIhS0tiTokzPQiw7GJRMHEBcRLRyA2m0aaNOOmzjjrLSd0rYgJJDLZPqYYwN9tobCf1uDEpj8cInshvsPDXKzRcEREy1VzDnFjL4XzI36yD++96GmAHChTt5RGmjQ1UIuc7uqk7Xub/Az1YVKnS52NQuzzpDwNPKuauXv+NpCQF28fW923Hrb2eWhcE/XI9doyIPFAF9Klv+eomo8QDmAb2MHuYUvt+0gdTi8azNobKzO+bTWJnKpUY53fOosxJp2UiV6ODCTdZAovzbpo/HbmxvtzcozWwbzd487aaGjOlDb6WOA9QUqyyIjFxvh6KPF8BXtgEDFyj1VBORuO1MuBweEVnk+lzhP6tPlAvsalQtyAtdtqPEIn6orALWU9jWsSSsZphKj9L20zz0FBFt7V2EjO9c8QndO3eDL7q1d55C3yj1Ohpp6BUaeg1mVqdjDlsbhtbQhoteHAlEEQ5P9zgflf3Xenbw7E9ahIejH5lUzE2A=
 
     file_glob: true
     file:
@@ -46,13 +46,13 @@ deploy:
       # If "tags" condition is not present, "branch" condition is considered
       tags: true
 
-  # See https://docs.travis-ci.com/user/deployment/heroku/
-  - provider: heroku
-    api_key:
-      secure: EFQlSfYNhNxCm4oIxvKP06vc8RwCz80P1Zoe1msKARqqqee6vG0A9Qwr/T/RViCxsPXhvSxFe/pWgrVC++CVBY1PH8RuMxE7lMqh0+f6zsT4R0Xg9Tq5lyxKLjhPGt+aFAt+Z2ajiIyev/hzpDa6qhhFLGpY6lIli4HhRauk+rlec0D2Ca7vVqKNCbI/TG2V7YE3r/dm5KXipg//Xq8EApji4bQtyUbQfXhfW4s5ZIwOOeRlOHNLhhF+vOYuBYICWrpyKrmctoiqc2z/H+IuT+sFOkebSfCx/DIyjzVMN6pDPVbYH9Il90f/de92eBbZXyiOBmFoaYjPMku3lhppZl9hlO2bJXL3jx84nt/JOfd7kh1tglAD0FYY081wrmYxM4SoD7bJXitSMDtB4kBrlsKSwBUZX6eXi99c30aQeb1GbwF+0Oa/ptgsr/klqJr80+gF/jhez5ykjF1VUeZSuhYDi9BrbXRK0jRNDaOKm8Yxmr00M+BEilwJC1mnypSbT7eEd7zk9tz2q2u7wUBHMArORQqi4icjJnDYvRwyiFyBeS8P/uMFDsFPRHUihYH320/TUM1SBc3QRJ4sy7RnANcqf+9k37xOVRSMFqpWVlekvZYTx0HA5dCHLleRocHDQ7CYOsCZQvtfVQLDwlCk0KbW5WqW4pieMgeY8/c9ykw=
-    app: greeting-microservice
-    # build on heroku can be initialized by its Build API (default) or by a git push
-    #strategy: git
-    skip_cleanup: true
-    on:
-      branch: master
+#  # See https://docs.travis-ci.com/user/deployment/heroku/
+#  - provider: heroku
+#    api_key:
+#      secure: EFQlSfYNhNxCm4oIxvKP06vc8RwCz80P1Zoe1msKARqqqee6vG0A9Qwr/T/RViCxsPXhvSxFe/pWgrVC++CVBY1PH8RuMxE7lMqh0+f6zsT4R0Xg9Tq5lyxKLjhPGt+aFAt+Z2ajiIyev/hzpDa6qhhFLGpY6lIli4HhRauk+rlec0D2Ca7vVqKNCbI/TG2V7YE3r/dm5KXipg//Xq8EApji4bQtyUbQfXhfW4s5ZIwOOeRlOHNLhhF+vOYuBYICWrpyKrmctoiqc2z/H+IuT+sFOkebSfCx/DIyjzVMN6pDPVbYH9Il90f/de92eBbZXyiOBmFoaYjPMku3lhppZl9hlO2bJXL3jx84nt/JOfd7kh1tglAD0FYY081wrmYxM4SoD7bJXitSMDtB4kBrlsKSwBUZX6eXi99c30aQeb1GbwF+0Oa/ptgsr/klqJr80+gF/jhez5ykjF1VUeZSuhYDi9BrbXRK0jRNDaOKm8Yxmr00M+BEilwJC1mnypSbT7eEd7zk9tz2q2u7wUBHMArORQqi4icjJnDYvRwyiFyBeS8P/uMFDsFPRHUihYH320/TUM1SBc3QRJ4sy7RnANcqf+9k37xOVRSMFqpWVlekvZYTx0HA5dCHLleRocHDQ7CYOsCZQvtfVQLDwlCk0KbW5WqW4pieMgeY8/c9ykw=
+#    app: greeting-microservice
+#    # build on heroku can be initialized by its Build API (default) or by a git push
+#    #strategy: git
+#    skip_cleanup: true
+#    on:
+#      branch: master
