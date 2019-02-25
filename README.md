@@ -1,7 +1,8 @@
 # Monitoring Microservice
+This is a simple REST microservice for basic monitoring of HTTP, HTTPS
+and TCP services.
 
-This is a simple REST microservice for basic monitoring of HTTP, HTTPS and TCP services.
-
+# HTTP API
 ## Add monitoring
 `curl -X POST http://localhost:80/monitoring/ -H 'Content-Type: text/plain' -d tcp://www.google.de:12345`
 
