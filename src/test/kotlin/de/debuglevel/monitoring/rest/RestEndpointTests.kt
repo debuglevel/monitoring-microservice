@@ -1,28 +1,36 @@
 package de.debuglevel.monitoring.rest
 
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.TestInstance
+import spark.Spark
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RestEndpointTests {
 
-//    init {
-//        val restEndpoint = RestEndpoint()
-//        restEndpoint.start(arrayOf())
-//
-//        awaitInitialization()
-//    }
-//
+    init {
+        val restEndpoint = RestEndpoint()
+        restEndpoint.start(arrayOf())
+
+        Spark.awaitInitialization()
+    }
+
+    @AfterAll
+    fun stopServer() {
+        SparkTestUtils.awaitShutdown()
+    }
+
 //    @Test
 //    fun `server listens on default port`() {
 //        // Arrange
 //
 //        // Act
-//        val response = ApiTestUtils.request("GET", "/greet/test", null)
+//        val response = ApiTestUtils.request("GET", "/users/", null)
 //
 //        // Assert
 //        // HTTP Codes begin from "100". So something from 100 and above was probably a response to a HTTP request
-//        assertThat(response?.status).isGreaterThanOrEqualTo(100)
+//        Assertions.assertThat(response?.status).isGreaterThanOrEqualTo(100)
 //    }
+
 //
 //    @Nested
 //    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
