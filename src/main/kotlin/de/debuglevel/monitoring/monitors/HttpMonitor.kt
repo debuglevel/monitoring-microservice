@@ -45,9 +45,12 @@ class HttpMonitor : Monitor {
     }
 
     override fun check(monitoring: Monitoring): ServiceState {
+        logger.debug { "Checking $monitoring..." }
+
         val url = monitoring.uri.toURL()
 
         val state = try {
+            logger.debug { "Opening connection on '$url'..." }
             val connection = url.openConnection() as HttpURLConnection
             SslTrustModifier.relaxHostChecking(connection)
             val statusCode = connection.responseCode
@@ -62,6 +65,7 @@ class HttpMonitor : Monitor {
             ServiceState.Down
         }
 
+        logger.debug { "Checked $monitoring: $state" }
         return state
     }
 }

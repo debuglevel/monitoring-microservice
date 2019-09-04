@@ -25,6 +25,7 @@ interface Monitor {
          * Gets the appropriate monitor for an URI
          */
         fun get(uri: URI): Monitor {
+
             return when (uri.scheme) {
                 "http" -> HttpMonitor()
                 "https" -> HttpMonitor()

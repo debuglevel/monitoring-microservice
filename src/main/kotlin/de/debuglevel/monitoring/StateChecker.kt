@@ -133,10 +133,17 @@ object StateChecker {
     }
 
     private fun resolveHostname(monitoring: Monitoring): String? {
-        return try {
-            InetAddress.getByName(monitoring.uri.host).hostAddress
+        val hostname = monitoring.uri.host
+        logger.debug { "Resolving hostname '$hostname'..." }
+
+        val address = try {
+            InetAddress.getByName(hostname).hostAddress
         } catch (e: java.lang.Exception) {
             return "could not resolve"
         }
+
+        logger.debug { "Resolved hostname '$hostname': '$address'" }
+
+        return address
     }
 }
