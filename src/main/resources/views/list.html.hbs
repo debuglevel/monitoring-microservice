@@ -76,18 +76,19 @@
     </thead>
     <tbody>
 
-    {{#monitorings}}
-        <tr class="{{serviceStateCssClass}} {{serviceStateCssTrClass}}">
+    {{#each monitorings}}
+        <tr class="{{this.serviceStateCssClass}} {{this.serviceStateCssTrClass}}">
             <td class="actions">
-                <button class="btn btn-outline-danger btn-sm btn-delete delete-monitoring" value="{{id}}">❌️</button>
+                <button class="btn btn-outline-danger btn-sm btn-delete delete-monitoring" value="{{this.id}}">❌️
+                </button>
             </td>
-            <td class="id">{{id}}</td>
-            <td class="state {{serviceStateCssId}}">{{serviceStateHtmlLabel}}</td>
-            <td class="lastSeen">{{lastSeen}}</td>
-            <td class="name">{{name}}</td>
-            <td class="url"><a href="{{url}}" data-toggle="tooltip" title="{{ip}}">{{url}}</a></td>
+            <td class="id">{{this.id}}</td>
+            <td class="state {{this.serviceStateCssId}}">{{this.serviceStateHtmlLabel}}</td>
+            <td class="lastSeen">{{this.lastSeen}}</td>
+            <td class="name">{{this.name}}</td>
+            <td class="url"><a href="{{this.url}}" data-toggle="tooltip" title="{{this.ip}}">{{this.url}}</a></td>
         </tr>
-    {{/monitorings}}
+    {{/each}}
 
     </tbody>
 </table>
@@ -127,7 +128,6 @@
         crossorigin="anonymous"></script>
 <script>
     $("[data-toggle='tooltip']").tooltip();
-
 </script>
 
 </body>

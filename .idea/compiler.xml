@@ -6,6 +6,8 @@
       <module name="greeting-microservice_test" target="1.8" />
       <module name="greeting_main" target="1.8" />
       <module name="greeting_test" target="1.8" />
+      <module name="mo-microservice_main" target="1.8" />
+      <module name="mo-microservice_test" target="1.8" />
       <module name="phonenumber-formatter_main" target="1.8" />
       <module name="phonenumber-formatter_test" target="1.8" />
       <module name="phonenumber_main" target="1.8" />

@@ -1,14 +1,20 @@
 package de.debuglevel.monitoring
 
 import com.mongodb.client.MongoCollection
+import de.debuglevel.monitoring.monitoring.MonitoringRequest
 import de.debuglevel.monitoring.monitors.Monitor
-import de.debuglevel.monitoring.rest.MonitoringDTO
+import io.micronaut.context.annotation.Property
+import io.micronaut.scheduling.annotation.Scheduled
 import mu.KotlinLogging
 import org.litote.kmongo.*
 import java.net.InetAddress
 import java.time.LocalDateTime
+import javax.inject.Singleton
 
-object StateChecker {
+@Singleton
+class StateChecker(
+    @Property(name = "mongodb.uri") val mongodbUri: String
+) {
     private val logger = KotlinLogging.logger {}
 
     private val monitorings: MongoCollection<Monitoring>
@@ -23,7 +29,7 @@ object StateChecker {
                 ?.plus(1) ?: 1
 
     init {
-        val mongoClient = KMongo.createClient(Configuration.mongodbUrl)
+        val mongoClient = KMongo.createClient(mongodbUri)
         val database = mongoClient.getDatabase("monitoring")
         monitorings = database.getCollection<Monitoring>()
     }
@@ -36,44 +42,44 @@ object StateChecker {
     /**
      * Adds a monitoring if it does not already exist.
      */
-    fun addMonitoring(monitoringDto: MonitoringDTO): Monitoring {
-        logger.debug { "Adding $monitoringDto..." }
-        if (!monitorings.find(Monitoring::url eq monitoringDto.url).any()) {
-            if (Monitor.get(monitoringDto.url).isValid(monitoringDto.url))
+    fun addMonitoring(monitoringRequest: MonitoringRequest): Monitoring {
+        logger.debug { "Adding $monitoringRequest..." }
+        if (!monitorings.find(Monitoring::url eq monitoringRequest.url).any()) {
+            if (Monitor.get(monitoringRequest.url).isValid(monitoringRequest.url))
             {
-                val monitoring = Monitoring(this.nextMonitoringId, monitoringDto.url, monitoringDto.name)
+                val monitoring = Monitoring(this.nextMonitoringId, monitoringRequest.url, monitoringRequest.name)
                 monitorings.insertOne(monitoring)
-                logger.debug { "Adding $monitoringDto done" }
+                logger.debug { "Adding $monitoringRequest done" }
                 return monitoring
             }else{
-                logger.debug { "Adding $monitoringDto failed as URL is invalid." }
-                throw InvalidMonitoringFormatException(monitoringDto.url)
+                logger.debug { "Adding $monitoringRequest failed as URL is invalid." }
+                throw InvalidMonitoringFormatException(monitoringRequest.url)
             }
         } else {
-            logger.debug { "Monitoring $monitoringDto not added, as it does already exist." }
-            throw MonitoringAlreadyExistsException(monitoringDto.url)
+            logger.debug { "Monitoring $monitoringRequest not added, as it does already exist." }
+            throw MonitoringAlreadyExistsException(monitoringRequest.url)
         }
     }
 
     /**
      * Updates a monitoring if it does already exist.
      */
-    fun updateMonitoring(id: Int, monitoringDto: MonitoringDTO): Monitoring {
-        logger.debug { "Updating $id with $monitoringDto..." }
+    fun updateMonitoring(id: Int, monitoringRequest: MonitoringRequest): Monitoring {
+        logger.debug { "Updating $id with $monitoringRequest..." }
         val monitoring = monitorings.findOne(Monitoring::id eq id)
         if (monitoring != null) {
-            if (Monitor.get(monitoringDto.url).isValid(monitoringDto.url)) {
-                monitoring.name = monitoringDto.name
-                monitoring.url = monitoringDto.url
+            if (Monitor.get(monitoringRequest.url).isValid(monitoringRequest.url)) {
+                monitoring.name = monitoringRequest.name
+                monitoring.url = monitoringRequest.url
                 monitorings.updateOne(monitoring)
                 logger.debug { "Updating $id done" }
                 return monitoring
             } else {
                 logger.debug { "Updating $id failed as URL is invalid." }
-                throw InvalidMonitoringFormatException(monitoringDto.url)
+                throw InvalidMonitoringFormatException(monitoringRequest.url)
             }
         } else {
-            logger.debug { "Monitoring $monitoringDto not updated, as it does not exist." }
+            logger.debug { "Monitoring $monitoringRequest not updated, as it does not exist." }
             throw MonitoringNotFoundException(id)
         }
     }
@@ -104,6 +110,7 @@ object StateChecker {
     /**
      * Check all monitorings
      */
+    @Scheduled(fixedDelay = "300s", initialDelay = "10s")
     fun checkAll() {
         logger.debug { "Checking all monitorings..." }
 
@@ -112,7 +119,7 @@ object StateChecker {
                 .onEach { check(it) }
                 .onEach { monitorings.updateOne(it) } // save modified object to MongoDB
 
-        logger.debug { "Checking all monitorings done" }
+        logger.debug { "Checked all monitorings" }
     }
 
     /**
