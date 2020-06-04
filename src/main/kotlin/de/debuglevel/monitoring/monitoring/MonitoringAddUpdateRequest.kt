@@ -1,6 +1,6 @@
 package de.debuglevel.monitoring.monitoring
 
-data class MonitoringRequest(
+data class MonitoringAddUpdateRequest(
     val url: String,
     val name: String
 )

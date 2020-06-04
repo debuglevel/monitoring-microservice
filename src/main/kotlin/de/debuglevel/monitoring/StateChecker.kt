@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring
 
 import com.mongodb.client.MongoCollection
-import de.debuglevel.monitoring.monitoring.MonitoringRequest
+import de.debuglevel.monitoring.monitoring.MonitoringAddUpdateRequest
 import de.debuglevel.monitoring.monitors.Monitor
 import io.micronaut.context.annotation.Property
 import io.micronaut.scheduling.annotation.Scheduled
@@ -42,44 +42,45 @@ class StateChecker(
     /**
      * Adds a monitoring if it does not already exist.
      */
-    fun addMonitoring(monitoringRequest: MonitoringRequest): Monitoring {
-        logger.debug { "Adding $monitoringRequest..." }
-        if (!monitorings.find(Monitoring::url eq monitoringRequest.url).any()) {
-            if (Monitor.get(monitoringRequest.url).isValid(monitoringRequest.url))
+    fun addMonitoring(monitoringAddUpdateRequest: MonitoringAddUpdateRequest): Monitoring {
+        logger.debug { "Adding $monitoringAddUpdateRequest..." }
+        if (!monitorings.find(Monitoring::url eq monitoringAddUpdateRequest.url).any()) {
+            if (Monitor.get(monitoringAddUpdateRequest.url).isValid(monitoringAddUpdateRequest.url))
             {
-                val monitoring = Monitoring(this.nextMonitoringId, monitoringRequest.url, monitoringRequest.name)
+                val monitoring =
+                    Monitoring(this.nextMonitoringId, monitoringAddUpdateRequest.url, monitoringAddUpdateRequest.name)
                 monitorings.insertOne(monitoring)
-                logger.debug { "Adding $monitoringRequest done" }
+                logger.debug { "Adding $monitoringAddUpdateRequest done" }
                 return monitoring
             }else{
-                logger.debug { "Adding $monitoringRequest failed as URL is invalid." }
-                throw InvalidMonitoringFormatException(monitoringRequest.url)
+                logger.debug { "Adding $monitoringAddUpdateRequest failed as URL is invalid." }
+                throw InvalidMonitoringFormatException(monitoringAddUpdateRequest.url)
             }
         } else {
-            logger.debug { "Monitoring $monitoringRequest not added, as it does already exist." }
-            throw MonitoringAlreadyExistsException(monitoringRequest.url)
+            logger.debug { "Monitoring $monitoringAddUpdateRequest not added, as it does already exist." }
+            throw MonitoringAlreadyExistsException(monitoringAddUpdateRequest.url)
         }
     }
 
     /**
      * Updates a monitoring if it does already exist.
      */
-    fun updateMonitoring(id: Int, monitoringRequest: MonitoringRequest): Monitoring {
-        logger.debug { "Updating $id with $monitoringRequest..." }
+    fun updateMonitoring(id: Int, monitoringAddUpdateRequest: MonitoringAddUpdateRequest): Monitoring {
+        logger.debug { "Updating $id with $monitoringAddUpdateRequest..." }
         val monitoring = monitorings.findOne(Monitoring::id eq id)
         if (monitoring != null) {
-            if (Monitor.get(monitoringRequest.url).isValid(monitoringRequest.url)) {
-                monitoring.name = monitoringRequest.name
-                monitoring.url = monitoringRequest.url
+            if (Monitor.get(monitoringAddUpdateRequest.url).isValid(monitoringAddUpdateRequest.url)) {
+                monitoring.name = monitoringAddUpdateRequest.name
+                monitoring.url = monitoringAddUpdateRequest.url
                 monitorings.updateOne(monitoring)
                 logger.debug { "Updating $id done" }
                 return monitoring
             } else {
                 logger.debug { "Updating $id failed as URL is invalid." }
-                throw InvalidMonitoringFormatException(monitoringRequest.url)
+                throw InvalidMonitoringFormatException(monitoringAddUpdateRequest.url)
             }
         } else {
-            logger.debug { "Monitoring $monitoringRequest not updated, as it does not exist." }
+            logger.debug { "Monitoring $monitoringAddUpdateRequest not updated, as it does not exist." }
             throw MonitoringNotFoundException(id)
         }
     }

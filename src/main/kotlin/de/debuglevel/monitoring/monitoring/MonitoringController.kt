@@ -1,6 +1,5 @@
 package de.debuglevel.monitoring.monitoring
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.StateChecker
 import de.debuglevel.monitoring.monitors.Monitor
 import de.debuglevel.monitoring.rest.transformers.MonitoringViewModel
@@ -18,11 +17,11 @@ class MonitoringController(private val stateChecker: StateChecker) {
     private val logger = KotlinLogging.logger {}
 
     @Post("/")
-    fun postOne(monitoringRequest: MonitoringRequest): HttpResponse<*> {
-        logger.debug("Called postOne($monitoringRequest)")
+    fun postOne(monitoringAddRequest: MonitoringAddUpdateRequest): HttpResponse<*> {
+        logger.debug("Called postOne($monitoringAddRequest)")
 
         return try {
-            val monitoring = stateChecker.addMonitoring(monitoringRequest)
+            val monitoring = stateChecker.addMonitoring(monitoringAddRequest)
             HttpResponse.created(monitoring)
         } catch (e: StateChecker.MonitoringAlreadyExistsException) {
             HttpResponse.badRequest("already exists")
@@ -36,11 +35,11 @@ class MonitoringController(private val stateChecker: StateChecker) {
     }
 
     @Put("/{id}")
-    fun putOne(id: Int, monitoringRequest: MonitoringRequest): HttpResponse<*> {
-        logger.debug("Called putOne($id, $monitoringRequest)")
+    fun putOne(id: Int, monitoringUpdateRequest: MonitoringAddUpdateRequest): HttpResponse<*> {
+        logger.debug("Called putOne($id, $monitoringUpdateRequest)")
 
         return try {
-            val monitoring = stateChecker.updateMonitoring(id, monitoringRequest)
+            val monitoring = stateChecker.updateMonitoring(id, monitoringUpdateRequest)
             HttpResponse.ok(monitoring)
         } catch (e: StateChecker.MonitoringNotFoundException) {
             HttpResponse.notFound("not found")
@@ -66,15 +65,16 @@ class MonitoringController(private val stateChecker: StateChecker) {
     }
 
     @Get("/", produces = [MediaType.APPLICATION_JSON])
-    fun getAll(): HttpResponse<Set<Monitoring>> {
+    fun getAll(): HttpResponse<List<MonitoringResponse>> {
         logger.debug("Called getAll()")
 
         return try {
-            val monitorings = stateChecker.getMonitorings()
-            HttpResponse.ok(monitorings)
+            val monitoringResponses = stateChecker.getMonitorings()
+                .map { MonitoringResponse(it) }
+            HttpResponse.ok(monitoringResponses)
         } catch (e: Exception) {
             logger.error(e) { "Unhandled exception" }
-            HttpResponse.serverError<Set<Monitoring>>()
+            HttpResponse.serverError<List<MonitoringResponse>>()
         }
     }
 
