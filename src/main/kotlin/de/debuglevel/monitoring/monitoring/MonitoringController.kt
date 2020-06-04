@@ -94,9 +94,9 @@ class MonitoringController(private val stateChecker: StateChecker) {
         }
     }
 
-    // TODO: does not seem to use view but just emit the map
     @View("list.plaintext")
-    @Get("/plaintext", produces = [MediaType.TEXT_PLAIN])
+    @Get("/plaintext", produces = [MediaType.TEXT_HTML])
+    //@Get("/plaintext", produces = [MediaType.TEXT_PLAIN]) // TODO: see https://github.com/micronaut-projects/micronaut-views/issues/56
     fun getAllPlaintext(): HttpResponse<*> {
         logger.debug("Called getAllPlaintext()")
 
