@@ -1,4 +1,4 @@
-package de.debuglevel.monitoring.rest.transformers
+package de.debuglevel.monitoring.monitoring
 
 import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState

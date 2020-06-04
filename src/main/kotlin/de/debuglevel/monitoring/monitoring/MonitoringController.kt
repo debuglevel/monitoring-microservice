@@ -2,7 +2,6 @@ package de.debuglevel.monitoring.monitoring
 
 import de.debuglevel.monitoring.StateChecker
 import de.debuglevel.monitoring.monitors.Monitor
-import de.debuglevel.monitoring.rest.transformers.MonitoringViewModel
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
