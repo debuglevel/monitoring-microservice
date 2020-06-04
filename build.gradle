@@ -131,8 +131,7 @@ dependencies {
     kapt "io.micronaut:micronaut-security"
     implementation "io.micronaut:micronaut-security"
     /// Views
-    implementation 'io.micronaut:micronaut-views'
-    runtimeOnly 'com.github.jknack:handlebars:4.1.0'
+    implementation 'io.micronaut:micronaut-views-handlebars'
 
     // Database
     implementation 'org.litote.kmongo:kmongo:3.9.2'
