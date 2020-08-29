@@ -27,7 +27,6 @@ object SslTrustModifier {
     @Synchronized
     @Throws(NoSuchAlgorithmException::class, KeyStoreException::class, KeyManagementException::class)
     internal fun prepFactory(httpsConnection: HttpsURLConnection): SSLSocketFactory? {
-
         if (factory == null) {
             val ctx = SSLContext.getInstance("TLS")
             ctx.init(null, arrayOf<TrustManager>(AlwaysTrustManager()), null)
@@ -55,5 +54,4 @@ object SslTrustModifier {
             return null
         }
     }
-
 }

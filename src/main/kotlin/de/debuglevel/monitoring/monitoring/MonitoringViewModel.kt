@@ -1,6 +1,5 @@
 package de.debuglevel.monitoring.monitoring
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
 import java.time.format.DateTimeFormatter
 import java.util.*

@@ -1,8 +1,6 @@
 package de.debuglevel.monitoring.monitoring
 
-import de.debuglevel.monitoring.Monitoring
-
-data class MonitoringResponse(
+data class GetMonitoringResponse(
     val id: Int,
     val url: String,
     val name: String

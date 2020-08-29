@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring.monitors
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
+import de.debuglevel.monitoring.monitoring.Monitoring
 import mu.KotlinLogging
 import java.net.ConnectException
 import java.net.InetAddress

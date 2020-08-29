@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring.monitors
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
+import de.debuglevel.monitoring.monitoring.Monitoring
 import mu.KotlinLogging
 import java.net.ConnectException
 import java.net.Socket
@@ -26,7 +26,7 @@ class TcpMonitor : Monitor {
     }
 
     override fun check(monitoring: Monitoring): ServiceState {
-        val state = try {
+        return try {
             Socket(monitoring.uri.host, monitoring.uri.port).use {
                 ServiceState.Up
             }
@@ -35,10 +35,8 @@ class TcpMonitor : Monitor {
         } catch (e: ConnectException) {
             ServiceState.Down
         } catch (e: Exception) {
-            logger.warn { "Unhandled exception: $e" }
+            logger.warn(e) { "Unhandled exception" }
             ServiceState.Down
         }
-
-        return state
     }
 }

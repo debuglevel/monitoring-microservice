@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring.monitors
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
+import de.debuglevel.monitoring.monitoring.Monitoring
 import mu.KotlinLogging
 import java.net.ConnectException
 import java.net.HttpURLConnection
@@ -16,9 +16,9 @@ class HttpMonitor : Monitor {
 
         // using Apache Commons Validator would be nice, but it cannot disable failing on custom TLDs.
         val url = try {
-            val urlObj = URL(urlString)
-            logger.debug { "Converted to URI with protocol '${urlObj.protocol}', host '${urlObj.host}', port '${urlObj.port}', path '${urlObj.path}', query '${urlObj.query}'..." }
-            urlObj
+            val url = URL(urlString)
+            logger.debug { "Converted to URI with protocol '${url.protocol}', host '${url.host}', port '${url.port}', path '${url.path}', query '${url.query}'..." }
+            url
         } catch (e: Exception) {
             logger.debug(e) { "Checking validity of URL '$urlString' failed with exception." }
             return false

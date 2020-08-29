@@ -1,6 +1,5 @@
 package de.debuglevel.monitoring.monitoring
 
-import de.debuglevel.monitoring.StateChecker
 import de.debuglevel.monitoring.monitors.Monitor
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
@@ -12,42 +11,45 @@ import mu.KotlinLogging
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/monitorings")
-class MonitoringController(private val stateChecker: StateChecker) {
+class MonitoringController(
+    private val monitoringService: MonitoringService,
+    private val stateChecker: StateChecker,
+) {
     private val logger = KotlinLogging.logger {}
 
     @Post("/")
-    fun postOne(monitoringAddRequest: MonitoringAddUpdateRequest): HttpResponse<*> {
-        logger.debug("Called postOne($monitoringAddRequest)")
+    fun postOne(addMonitoringRequest: AddMonitoringRequest): HttpResponse<*> {
+        logger.debug("Called postOne($addMonitoringRequest)")
 
         return try {
-            val monitoring = stateChecker.addMonitoring(monitoringAddRequest)
+            val monitoring = monitoringService.addMonitoring(addMonitoringRequest)
             HttpResponse.created(monitoring)
-        } catch (e: StateChecker.MonitoringAlreadyExistsException) {
-            HttpResponse.badRequest("already exists")
-        } catch (e: StateChecker.InvalidMonitoringFormatException) {
-            HttpResponse.badRequest("supplied URL is invalid: ${e.message}")
+        } catch (e: MonitoringService.MonitoringAlreadyExistsException) {
+            HttpResponse.badRequest("Monitoring does already exist")
+        } catch (e: MonitoringService.InvalidMonitoringFormatException) {
+            HttpResponse.badRequest("Supplied URL is invalid: ${e.message}")
         } catch (e: Monitor.EmptyMonitoringProtocolException) {
-            HttpResponse.badRequest("protocol must be supplied")
+            HttpResponse.badRequest("Protocol must be supplied")
         } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
-            HttpResponse.badRequest("protocol is not supported")
+            HttpResponse.badRequest("Protocol '${e.scheme}' is not supported")
         }
     }
 
     @Put("/{id}")
-    fun putOne(id: Int, monitoringUpdateRequest: MonitoringAddUpdateRequest): HttpResponse<*> {
-        logger.debug("Called putOne($id, $monitoringUpdateRequest)")
+    fun putOne(id: Int, updateMonitoringRequest: UpdateMonitoringRequest): HttpResponse<*> {
+        logger.debug("Called putOne($id, $updateMonitoringRequest)")
 
         return try {
-            val monitoring = stateChecker.updateMonitoring(id, monitoringUpdateRequest)
+            val monitoring = monitoringService.updateMonitoring(id, updateMonitoringRequest)
             HttpResponse.ok(monitoring)
-        } catch (e: StateChecker.MonitoringNotFoundException) {
-            HttpResponse.notFound("not found")
-        } catch (e: StateChecker.InvalidMonitoringFormatException) {
-            HttpResponse.badRequest("supplied URL is invalid: ${e.message}")
+        } catch (e: MonitoringService.MonitoringNotFoundException) {
+            HttpResponse.notFound("Monitoring does not exist")
+        } catch (e: MonitoringService.InvalidMonitoringFormatException) {
+            HttpResponse.badRequest("Supplied URL is invalid: ${e.message}")
         } catch (e: Monitor.EmptyMonitoringProtocolException) {
-            HttpResponse.badRequest("protocol must be supplied")
+            HttpResponse.badRequest("Protocol must be supplied")
         } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
-            HttpResponse.badRequest("protocol is not supported")
+            HttpResponse.badRequest("Protocol '${e.scheme}' is not supported")
         }
     }
 
@@ -56,24 +58,24 @@ class MonitoringController(private val stateChecker: StateChecker) {
         logger.debug("Called deleteOne($id)")
 
         return try {
-            stateChecker.removeMonitoring(id)
-            HttpResponse.ok("removed")
-        } catch (e: StateChecker.MonitoringNotFoundException) {
-            HttpResponse.ok("not found")
+            monitoringService.removeMonitoring(id)
+            HttpResponse.ok("Removed monitoring")
+        } catch (e: MonitoringService.MonitoringNotFoundException) {
+            HttpResponse.ok("Monitoring does not exist")
         }
     }
 
     @Get("/", produces = [MediaType.APPLICATION_JSON])
-    fun getAll(): HttpResponse<List<MonitoringResponse>> {
+    fun getAll(): HttpResponse<*> {
         logger.debug("Called getAll()")
 
         return try {
-            val monitoringResponses = stateChecker.getMonitorings()
-                .map { MonitoringResponse(it) }
+            val monitoringResponses = monitoringService.getMonitorings()
+                .map { GetMonitoringResponse(it) }
             HttpResponse.ok(monitoringResponses)
         } catch (e: Exception) {
             logger.error(e) { "Unhandled exception" }
-            HttpResponse.serverError<List<MonitoringResponse>>()
+            HttpResponse.serverError("Unhandled exception: ${e.stackTrace}")
         }
     }
 
@@ -83,14 +85,14 @@ class MonitoringController(private val stateChecker: StateChecker) {
         logger.debug("Called getAllHtml()")
 
         return try {
-            val monitorings = stateChecker.getMonitorings()
+            val monitorings = monitoringService.getMonitorings()
                 .sortedWith(compareBy({ it.name }, { it.uri.host }, { it.url }))
                 .map { MonitoringViewModel(it) }
 
             HttpResponse.ok(mapOf("monitorings" to monitorings))
         } catch (e: Exception) {
             logger.error(e) { "Unhandled exception" }
-            HttpResponse.serverError<String>(e.toString())
+            HttpResponse.serverError("Unhandled exception: ${e.stackTrace}")
         }
     }
 
@@ -101,14 +103,14 @@ class MonitoringController(private val stateChecker: StateChecker) {
         logger.debug("Called getAllPlaintext()")
 
         return try {
-            val monitorings = stateChecker.getMonitorings()
+            val monitorings = monitoringService.getMonitorings()
                 .sortedWith(compareBy({ it.name }, { it.uri.host }, { it.url }))
                 .map { MonitoringViewModel(it) }
 
             HttpResponse.ok(mapOf("monitorings" to monitorings))
         } catch (e: Exception) {
             logger.error(e) { "Unhandled exception" }
-            HttpResponse.serverError<String>(e.toString())
+            HttpResponse.serverError("Unhandled exception: ${e.stackTrace}")
         }
     }
 }

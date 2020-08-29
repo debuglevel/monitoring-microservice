@@ -1,5 +1,6 @@
-package de.debuglevel.monitoring
+package de.debuglevel.monitoring.monitoring
 
+import de.debuglevel.monitoring.ServiceState
 import java.net.URI
 import java.time.LocalDateTime
 
@@ -36,5 +37,5 @@ data class Monitoring(val id: Int, var url: String, var name: String? = "") {
     @Transient
     val uri = URI(url)
 
-    override fun toString() = "$url"
+    override fun toString() = url
 }

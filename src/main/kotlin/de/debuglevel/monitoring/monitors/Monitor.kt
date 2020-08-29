@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring.monitors
 
-import de.debuglevel.monitoring.Monitoring
 import de.debuglevel.monitoring.ServiceState
+import de.debuglevel.monitoring.monitoring.Monitoring
 import java.net.URI
 
 interface Monitor {
@@ -25,7 +25,6 @@ interface Monitor {
          * Gets the appropriate monitor for an URI
          */
         fun get(uri: URI): Monitor {
-
             return when (uri.scheme) {
                 "http" -> HttpMonitor()
                 "https" -> HttpMonitor()
@@ -44,5 +43,5 @@ interface Monitor {
     }
 
     class EmptyMonitoringProtocolException : Exception("Protocol must not be empty.")
-    class UnsupportedMonitoringProtocolException(scheme: String) : Exception("Protocol '$scheme' is not supported.")
+    class UnsupportedMonitoringProtocolException(val scheme: String) : Exception("Protocol '$scheme' is not supported.")
 }
