@@ -8,6 +8,7 @@ import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import io.micronaut.views.View
 import mu.KotlinLogging
+import java.net.URI
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/monitorings")
@@ -22,7 +23,7 @@ class MonitoringController(
         logger.debug("Called postOne($addMonitoringRequest)")
 
         return try {
-            val monitoring = monitoringService.addMonitoring(addMonitoringRequest)
+            val monitoring = monitoringService.add(addMonitoringRequest.toMonitoring())
             HttpResponse.created(monitoring)
         } catch (e: MonitoringService.MonitoringAlreadyExistsException) {
             HttpResponse.badRequest("Monitoring does already exist")
@@ -40,7 +41,7 @@ class MonitoringController(
         logger.debug("Called putOne($id, $updateMonitoringRequest)")
 
         return try {
-            val monitoring = monitoringService.updateMonitoring(id, updateMonitoringRequest)
+            val monitoring = monitoringService.update(id, updateMonitoringRequest.toMonitoring())
             HttpResponse.ok(monitoring)
         } catch (e: MonitoringService.MonitoringNotFoundException) {
             HttpResponse.notFound("Monitoring does not exist")
@@ -58,10 +59,10 @@ class MonitoringController(
         logger.debug("Called deleteOne($id)")
 
         return try {
-            monitoringService.removeMonitoring(id)
-            HttpResponse.ok("Removed monitoring")
+            monitoringService.delete(id)
+            HttpResponse.ok("Deleted monitoring $id")
         } catch (e: MonitoringService.MonitoringNotFoundException) {
-            HttpResponse.ok("Monitoring does not exist")
+            HttpResponse.ok("Monitoring $id does not exist")
         }
     }
 
@@ -70,7 +71,7 @@ class MonitoringController(
         logger.debug("Called getAll()")
 
         return try {
-            val monitoringResponses = monitoringService.getMonitorings()
+            val monitoringResponses = monitoringService.list()
                 .map { GetMonitoringResponse(it) }
             HttpResponse.ok(monitoringResponses)
         } catch (e: Exception) {
@@ -85,8 +86,8 @@ class MonitoringController(
         logger.debug("Called getAllHtml()")
 
         return try {
-            val monitorings = monitoringService.getMonitorings()
-                .sortedWith(compareBy({ it.name }, { it.uri.host }, { it.url }))
+            val monitorings = monitoringService.list()
+                .sortedWith(compareBy({ it.name }, { URI(it.url).host }, { it.url }))
                 .map { MonitoringViewModel(it) }
 
             HttpResponse.ok(mapOf("monitorings" to monitorings))
@@ -103,8 +104,8 @@ class MonitoringController(
         logger.debug("Called getAllPlaintext()")
 
         return try {
-            val monitorings = monitoringService.getMonitorings()
-                .sortedWith(compareBy({ it.name }, { it.uri.host }, { it.url }))
+            val monitorings = monitoringService.list()
+                .sortedWith(compareBy({ it.name }, { URI(it.url).host }, { it.url }))
                 .map { MonitoringViewModel(it) }
 
             HttpResponse.ok(mapOf("monitorings" to monitorings))

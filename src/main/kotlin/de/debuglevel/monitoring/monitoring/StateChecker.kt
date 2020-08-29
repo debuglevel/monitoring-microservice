@@ -4,8 +4,8 @@ import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitors.Monitor
 import io.micronaut.scheduling.annotation.Scheduled
 import mu.KotlinLogging
-import org.litote.kmongo.updateOne
 import java.net.InetAddress
+import java.net.URI
 import java.time.LocalDateTime
 import javax.inject.Singleton
 
@@ -18,17 +18,18 @@ class StateChecker(
     /**
      * Check all monitorings
      */
+    // TODO: define delay via configuration
     @Scheduled(fixedDelay = "300s", initialDelay = "10s")
     fun checkAll() {
         logger.debug { "Checking all monitorings..." }
 
-        monitoringService.monitorings
-            .find()
-            .toSet() // "escape" the Iterator of MongoCollection which would always pass the unmodified object list in a call chain
-            .onEach { check(it) }
-            .onEach { monitoringService.monitorings.updateOne(it) } // save modified object to MongoDB
+        val monitorings = monitoringService.list()
 
-        logger.debug { "Checked ${monitoringService.monitorings.countDocuments()} monitorings" }
+        monitorings
+            .onEach { check(it) }
+            .onEach { monitoringService.update(it.id!!, it) }
+
+        logger.debug { "Checked ${monitorings.count()} monitorings" }
     }
 
     /**
@@ -37,7 +38,7 @@ class StateChecker(
     private fun check(monitoring: Monitoring) {
         logger.debug { "Checking $monitoring..." }
 
-        val monitor = Monitor.get(monitoring)
+        val monitor = Monitor.get(monitoring.url)
         monitoring.serviceState = monitor.check(monitoring)
         monitoring.lastCheck = LocalDateTime.now()
         monitoring.ip = resolveHostname(monitoring)
@@ -49,17 +50,17 @@ class StateChecker(
     }
 
     private fun resolveHostname(monitoring: Monitoring): String? {
-        val hostname = monitoring.uri.host
+        val hostname = URI(monitoring.url).host
         logger.debug { "Resolving hostname '$hostname'..." }
 
-        val address = try {
+        val ip = try {
             InetAddress.getByName(hostname).hostAddress
         } catch (e: java.lang.Exception) {
-            return "could not resolve"
+            logger.warn(e) { "Could not resolve hostname $hostname to IP" }
+            return "could not resolve hostname"
         }
 
-        logger.debug { "Resolved hostname '$hostname': '$address'" }
-
-        return address
+        logger.debug { "Resolved hostname '$hostname': '$ip'" }
+        return ip
     }
 }

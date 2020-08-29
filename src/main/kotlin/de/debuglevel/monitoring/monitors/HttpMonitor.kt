@@ -3,10 +3,7 @@ package de.debuglevel.monitoring.monitors
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitoring.Monitoring
 import mu.KotlinLogging
-import java.net.ConnectException
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.UnknownHostException
+import java.net.*
 
 class HttpMonitor : Monitor {
     private val logger = KotlinLogging.logger {}
@@ -47,7 +44,7 @@ class HttpMonitor : Monitor {
     override fun check(monitoring: Monitoring): ServiceState {
         logger.debug { "Checking $monitoring..." }
 
-        val url = monitoring.uri.toURL()
+        val url = URI(monitoring.url).toURL()
 
         val state = try {
             logger.debug { "Opening connection on '$url'..." }

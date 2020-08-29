@@ -17,7 +17,7 @@ interface Monitor {
 
     companion object {
         /**
-         * Gets the appropriate monitor for a URL string
+         * Gets the appropriate monitor for an URL string
          */
         fun get(url: String) = get(URI(url))
 
@@ -35,11 +35,6 @@ interface Monitor {
                 else -> throw UnsupportedMonitoringProtocolException(uri.scheme)
             }
         }
-
-        /**
-         * Gets the appropriate monitor for a monitoring
-         */
-        fun get(monitoring: Monitoring) = get(monitoring.uri)
     }
 
     class EmptyMonitoringProtocolException : Exception("Protocol must not be empty.")

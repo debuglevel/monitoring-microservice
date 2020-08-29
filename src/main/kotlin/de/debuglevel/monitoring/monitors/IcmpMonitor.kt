@@ -23,7 +23,7 @@ class IcmpMonitor : Monitor {
 
     override fun check(monitoring: Monitoring): ServiceState {
         return try {
-            val ip = InetAddress.getByName(monitoring.uri.host)
+            val ip = InetAddress.getByName(URI(monitoring.url).host)
             val isReachable = ip?.isReachable(500) ?: false
             when (isReachable) {
                 true -> ServiceState.Up

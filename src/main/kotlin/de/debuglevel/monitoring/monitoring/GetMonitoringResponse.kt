@@ -1,7 +1,7 @@
 package de.debuglevel.monitoring.monitoring
 
 data class GetMonitoringResponse(
-    val id: Int,
+    val id: Int?,
     val url: String,
     val name: String
 ) {

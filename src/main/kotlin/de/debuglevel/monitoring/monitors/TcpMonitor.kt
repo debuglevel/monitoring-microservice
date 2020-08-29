@@ -27,7 +27,7 @@ class TcpMonitor : Monitor {
 
     override fun check(monitoring: Monitoring): ServiceState {
         return try {
-            Socket(monitoring.uri.host, monitoring.uri.port).use {
+            Socket(URI(monitoring.url).host, URI(monitoring.url).port).use {
                 ServiceState.Up
             }
         } catch (e: UnknownHostException) {
