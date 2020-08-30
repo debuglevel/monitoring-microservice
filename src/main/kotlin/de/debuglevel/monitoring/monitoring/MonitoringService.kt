@@ -39,11 +39,15 @@ class MonitoringService(
 
         // an object must be known to Hibernate (i.e. retrieved first) to get updated;
         // it would be a "detached entity" otherwise.
-        val oldMonitoring = this.get(id)
-        val oldUrl = oldMonitoring.url
-        val updateMonitoring = oldMonitoring.apply {
+        val updateMonitoring = this.get(id)
+        val oldUrl = updateMonitoring.url
+        updateMonitoring.apply {
             name = monitoring.name
             url = monitoring.url
+            ip = monitoring.ip
+            serviceState = monitoring.serviceState
+            lastSeen = monitoring.lastSeen
+            lastCheck = monitoring.lastCheck
         }
 
         if (oldUrl != monitoring.url && monitoringRepository.existsByUrl(monitoring.url)) {
