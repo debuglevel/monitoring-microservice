@@ -13,7 +13,7 @@ interface Monitor {
     /**
      * Whether a monitoring has a valid format
      */
-    fun isValid(urlString: String): Boolean
+    fun isValid(url: String): Boolean
 
     companion object {
         /**

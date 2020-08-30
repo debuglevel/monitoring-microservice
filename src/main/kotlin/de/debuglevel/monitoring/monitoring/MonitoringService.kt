@@ -1,5 +1,6 @@
 package de.debuglevel.monitoring.monitoring
 
+import de.debuglevel.monitoring.monitors.Monitor
 import mu.KotlinLogging
 import javax.inject.Singleton
 
@@ -21,8 +22,12 @@ class MonitoringService(
     fun add(monitoring: Monitoring): Monitoring {
         logger.debug { "Adding monitoring '$monitoring'..." }
 
-        // TODO: prevent adding a monitoring with an existing URL
-        // TODO: prevent adding a monitoring with an invalid URL
+        if (monitoringRepository.existsByUrl(monitoring.url)) {
+            throw MonitoringAlreadyExistsException(monitoring.url)
+        } else if (!Monitor.get(monitoring.url).isValid(monitoring.url)) {
+            throw InvalidMonitoringFormatException(monitoring.url)
+        }
+
         val savedMonitoring = monitoringRepository.save(monitoring)
 
         logger.debug { "Added monitoring: $savedMonitoring" }
@@ -34,14 +39,23 @@ class MonitoringService(
 
         // an object must be known to Hibernate (i.e. retrieved first) to get updated;
         // it would be a "detached entity" otherwise.
-        val updateMonitoring = this.get(id).apply {
+        val oldMonitoring = this.get(id)
+        val oldUrl = oldMonitoring.url
+        val updateMonitoring = oldMonitoring.apply {
             name = monitoring.name
             url = monitoring.url
         }
 
+        if (oldUrl != monitoring.url && monitoringRepository.existsByUrl(monitoring.url)) {
+            // if URL changed and the new URL does already exist
+            throw MonitoringAlreadyExistsException(monitoring.url)
+        } else if (!Monitor.get(monitoring.url).isValid(monitoring.url)) {
+            throw InvalidMonitoringFormatException(monitoring.url)
+        }
+
         val updatedMonitoring = monitoringRepository.update(updateMonitoring)
 
-        logger.debug { "Updated monitoring: $updatedMonitoring with ID '$id'" }
+        logger.debug { "Updated monitoring $monitoring with ID '$id': $updatedMonitoring" }
         return updatedMonitoring
     }
 

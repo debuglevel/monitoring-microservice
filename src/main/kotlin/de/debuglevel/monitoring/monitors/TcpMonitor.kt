@@ -11,9 +11,9 @@ import java.net.UnknownHostException
 class TcpMonitor : Monitor {
     private val logger = KotlinLogging.logger {}
 
-    override fun isValid(urlString: String): Boolean {
+    override fun isValid(url: String): Boolean {
         val uri = try {
-            URI(urlString)
+            URI(url)
         } catch (e: Exception) {
             return false
         }

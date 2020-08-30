@@ -8,16 +8,16 @@ import java.net.*
 class HttpMonitor : Monitor {
     private val logger = KotlinLogging.logger {}
 
-    override fun isValid(urlString: String): Boolean {
-        logger.debug { "Checking validity of URL '$urlString'..." }
+    override fun isValid(url: String): Boolean {
+        logger.debug { "Checking validity of URL '$url'..." }
 
         // using Apache Commons Validator would be nice, but it cannot disable failing on custom TLDs.
         val url = try {
-            val url = URL(urlString)
+            val url = URL(url)
             logger.debug { "Converted to URI with protocol '${url.protocol}', host '${url.host}', port '${url.port}', path '${url.path}', query '${url.query}'..." }
             url
         } catch (e: Exception) {
-            logger.debug(e) { "Checking validity of URL '$urlString' failed with exception." }
+            logger.debug(e) { "Checking validity of URL '$url' failed with exception." }
             return false
         }
 
