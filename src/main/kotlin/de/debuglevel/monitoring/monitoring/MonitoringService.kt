@@ -1,5 +1,6 @@
 package de.debuglevel.monitoring.monitoring
 
+import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitors.Monitor
 import mu.KotlinLogging
 import javax.inject.Singleton
@@ -55,6 +56,14 @@ class MonitoringService(
             throw MonitoringAlreadyExistsException(monitoring.url)
         } else if (!Monitor.get(monitoring.url).isValid(monitoring.url)) {
             throw InvalidMonitoringFormatException(monitoring.url)
+        }
+
+        // reset various states if the URL was changed
+        if (oldUrl != monitoring.url) {
+            updateMonitoring.serviceState = ServiceState.Unknown
+            updateMonitoring.ip = null
+            updateMonitoring.lastSeen = null
+            updateMonitoring.lastCheck = null
         }
 
         val updatedMonitoring = monitoringRepository.update(updateMonitoring)
