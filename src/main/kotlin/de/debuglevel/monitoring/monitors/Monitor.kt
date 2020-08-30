@@ -37,7 +37,6 @@ interface Monitor {
         }
     }
 
-    class EmptyMonitoringProtocolException : Exception("Protocol must not be empty.")
     class UnsupportedMonitoringProtocolException(val scheme: String) : Exception("Protocol '$scheme' is not supported.")
     class InvalidMonitoringFormatException(url: String, inner: Exception) :
         Exception("Monitoring with URL '$url' has an invalid format: ${inner.message}")
