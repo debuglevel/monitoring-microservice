@@ -23,7 +23,7 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
   security:
-    enabled: true # default: false
+    enabled: false # default: false
 #  http:
 #    services: # manual service discovery
 #      foo: # service ID
