@@ -29,8 +29,6 @@ class MonitoringController(
             HttpResponse.badRequest("Monitoring does already exist")
         } catch (e: MonitoringService.InvalidMonitoringFormatException) {
             HttpResponse.badRequest("Supplied URL is invalid: ${e.message}")
-        } catch (e: Monitor.EmptyMonitoringProtocolException) {
-            HttpResponse.badRequest("Protocol must be supplied")
         } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
             HttpResponse.badRequest("Protocol '${e.scheme}' is not supported")
         }
@@ -47,8 +45,6 @@ class MonitoringController(
             HttpResponse.notFound("Monitoring does not exist")
         } catch (e: MonitoringService.InvalidMonitoringFormatException) {
             HttpResponse.badRequest("Supplied URL is invalid: ${e.message}")
-        } catch (e: Monitor.EmptyMonitoringProtocolException) {
-            HttpResponse.badRequest("Protocol must be supplied")
         } catch (e: Monitor.UnsupportedMonitoringProtocolException) {
             HttpResponse.badRequest("Protocol '${e.scheme}' is not supported")
         }
