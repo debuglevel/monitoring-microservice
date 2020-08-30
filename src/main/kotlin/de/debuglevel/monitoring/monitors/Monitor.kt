@@ -19,19 +19,19 @@ interface Monitor {
         /**
          * Gets the appropriate monitor for an URL string
          */
-        fun get(url: String) = get(URI(url))
+        fun get(url: String): Monitor {
+            val uri = try {
+                URI(url)
+            } catch (e: Exception) {
+                // e.g. java.net.URISyntaxException: Expected scheme name at index 0: ://
+                throw InvalidMonitoringFormatException(url, e)
+            }
 
-        /**
-         * Gets the appropriate monitor for an URI
-         */
-        fun get(uri: URI): Monitor {
             return when (uri.scheme) {
                 "http" -> HttpMonitor()
                 "https" -> HttpMonitor()
                 "tcp" -> TcpMonitor()
                 "icmp" -> IcmpMonitor()
-                "" -> throw EmptyMonitoringProtocolException()
-                null -> throw EmptyMonitoringProtocolException()
                 else -> throw UnsupportedMonitoringProtocolException(uri.scheme)
             }
         }
@@ -39,4 +39,6 @@ interface Monitor {
 
     class EmptyMonitoringProtocolException : Exception("Protocol must not be empty.")
     class UnsupportedMonitoringProtocolException(val scheme: String) : Exception("Protocol '$scheme' is not supported.")
+    class InvalidMonitoringFormatException(url: String, inner: Exception) :
+        Exception("Monitoring with URL '$url' has an invalid format: ${inner.message}")
 }

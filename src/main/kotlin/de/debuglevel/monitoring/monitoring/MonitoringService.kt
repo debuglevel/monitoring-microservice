@@ -39,7 +39,7 @@ class MonitoringService(
 
         // an object must be known to Hibernate (i.e. retrieved first) to get updated;
         // it would be a "detached entity" otherwise.
-        val updateMonitoring = this.get(id)
+        val updateMonitoring = this.get(id).copy()
         val oldUrl = updateMonitoring.url
         updateMonitoring.apply {
             name = monitoring.name
