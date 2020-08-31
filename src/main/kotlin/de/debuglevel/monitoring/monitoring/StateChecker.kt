@@ -31,24 +31,17 @@ class StateChecker(
 
         val monitorings = monitoringService.list()
         val duration = measureTime {
-            logger.debug { "Begin Chain" }
             runBlocking {
                 monitorings
                     .map {
-                        logger.debug { "Begin OnEach: $it.id" }
-                        val job = GlobalScope.launch {
-                            logger.debug { "Begin Launch: $it.id" }
+                        // Use coroutines to run checks non-blocking/concurrently.
+                        GlobalScope.launch {
                             check(it)
-                            logger.debug { "Begin Launch: $it.id" }
+                            monitoringService.update(it.id!!, it)
                         }
-                        logger.debug { "End OnEach: $it.id" }
-                        job
-                    }.forEach { it.join() }
+                    }
+                    .map { it.join() }
             }
-            logger.debug { "End Chain" }
-
-            monitorings
-                .onEach { monitoringService.update(it.id!!, it) }
         }
 
         logger.debug { "Checked ${monitorings.count()} monitorings in $duration" }
