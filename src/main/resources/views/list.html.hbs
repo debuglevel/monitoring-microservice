@@ -64,6 +64,7 @@
         .table-sm td, .table-sm th {
             padding: 0rem;
         }
+
     </style>
 </head>
 <body>
@@ -72,7 +73,7 @@
     <tr>
         <th scope="col" class="id">Actions</th>
         <th scope="col" class="id">ID</th>
-        <th scope="col" class="state">State</th>
+        <!-- <th scope="col" class="state">State</th> -->
         <th scope="col" class="lastSeen">last Seen</th>
         <th scope="col" class="name">Name</th>
         <th scope="col" class="url">URL</th>
@@ -88,7 +89,7 @@
                 </button>
             </td>
             <td class="id">{{this.id}}</td>
-            <td class="state {{this.serviceStateCssId}}">{{this.serviceStateHtmlLabel}}</td>
+            <!-- <td class="state {{this.serviceStateCssId}}">{{this.serviceStateHtmlLabel}}</td> -->
             <td class="lastSeen">{{this.lastSeen}}</td>
             <td class="name">{{this.name}}</td>
             <td class="url"><a href="{{this.url}}" data-toggle="tooltip" title="{{this.ip}}">{{this.url}}</a></td>
