@@ -19,13 +19,6 @@ data class MonitoringViewModel(val monitoring: Monitoring) {
             else -> "[ ?? ]"
         }
 
-    val serviceStateCssClass
-        get() = when (monitoring.serviceState) {
-            ServiceState.Up -> "up"
-            ServiceState.Down -> "down"
-            else -> "unknown"
-        }
-
     val serviceStateHtmlLabel
         get() = when (monitoring.serviceState) {
             ServiceState.Up -> "up"
