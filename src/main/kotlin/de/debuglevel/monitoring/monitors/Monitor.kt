@@ -2,6 +2,7 @@ package de.debuglevel.monitoring.monitors
 
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitoring.Monitoring
+import mu.KotlinLogging
 import java.net.URI
 
 interface Monitor {
@@ -16,10 +17,13 @@ interface Monitor {
     fun isValid(url: String): Boolean
 
     companion object {
+        private val logger = KotlinLogging.logger {}
+
         /**
          * Gets the appropriate monitor for an URL string
          */
         fun get(url: String): Monitor {
+            logger.debug { "Getting monitor for $url..." }
             val uri = try {
                 URI(url)
             } catch (e: Exception) {
@@ -27,13 +31,16 @@ interface Monitor {
                 throw InvalidMonitoringFormatException(url, e)
             }
 
-            return when (uri.scheme) {
+            val monitor = when (uri.scheme) {
                 "http" -> HttpMonitor()
                 "https" -> HttpMonitor()
                 "tcp" -> TcpMonitor()
                 "icmp" -> IcmpMonitor()
                 else -> throw UnsupportedMonitoringProtocolException(uri.scheme)
             }
+
+            logger.debug { "Got monitor for $url: $monitor" }
+            return monitor
         }
     }
 
