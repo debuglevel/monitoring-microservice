@@ -38,7 +38,7 @@ class StateChecker(
                         GlobalScope.launch {
                             check(it)
                             monitoringService.update(it.id!!, it)
-                        }
+                        }//.join() // DEBUG: Use a join() here to prevent concurrent execution
                     }
                     .map { it.join() }
             }
