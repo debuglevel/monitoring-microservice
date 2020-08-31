@@ -16,16 +16,18 @@ import kotlin.time.measureTime
 
 @Singleton
 class StateChecker(
-    private val monitoringService: MonitoringService
+    private val monitoringService: MonitoringService,
 ) {
     private val logger = KotlinLogging.logger {}
 
     /**
      * Check all monitorings
      */
-    // TODO: define delay via configuration
     @ExperimentalTime
-    @Scheduled(fixedDelay = "60s", initialDelay = "10s")
+    @Scheduled(
+        fixedDelay = "\${app.monitoring.checks.delay:60s}",
+        initialDelay = "\${app.monitoring.checks.initial-delay:10s}"
+    )
     fun checkAll() {
         logger.debug { "Checking all monitorings..." }
 

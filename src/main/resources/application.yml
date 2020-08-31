@@ -1,5 +1,8 @@
 app:
   monitoring:
+    checks:
+      initial-delay: 10s
+      delay: 60s
   security:
     configurable-credential-authentication:
       username: "SECRET_USERNAME"
