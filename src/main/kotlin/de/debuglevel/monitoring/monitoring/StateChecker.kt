@@ -8,6 +8,8 @@ import java.net.InetAddress
 import java.net.URI
 import java.time.LocalDateTime
 import javax.inject.Singleton
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 @Singleton
 class StateChecker(
@@ -19,17 +21,19 @@ class StateChecker(
      * Check all monitorings
      */
     // TODO: define delay via configuration
-    @Scheduled(fixedDelay = "300s", initialDelay = "10s")
+    @ExperimentalTime
+    @Scheduled(fixedDelay = "60s", initialDelay = "10s")
     fun checkAll() {
         logger.debug { "Checking all monitorings..." }
 
         val monitorings = monitoringService.list()
+        val duration = measureTime {
+            monitorings
+                .onEach { check(it) }
+                .onEach { monitoringService.update(it.id!!, it) }
+        }
 
-        monitorings
-            .onEach { check(it) }
-            .onEach { monitoringService.update(it.id!!, it) }
-
-        logger.debug { "Checked ${monitorings.count()} monitorings" }
+        logger.debug { "Checked ${monitorings.count()} monitorings in $duration" }
     }
 
     /**
