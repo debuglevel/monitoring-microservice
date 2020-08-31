@@ -3,6 +3,9 @@ package de.debuglevel.monitoring.monitoring
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitors.Monitor
 import io.micronaut.scheduling.annotation.Scheduled
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import java.net.InetAddress
 import java.net.URI
@@ -28,8 +31,23 @@ class StateChecker(
 
         val monitorings = monitoringService.list()
         val duration = measureTime {
+            logger.debug { "Begin Chain" }
+            runBlocking {
+                monitorings
+                    .map {
+                        logger.debug { "Begin OnEach: $it.id" }
+                        val job = GlobalScope.launch {
+                            logger.debug { "Begin Launch: $it.id" }
+                            check(it)
+                            logger.debug { "Begin Launch: $it.id" }
+                        }
+                        logger.debug { "End OnEach: $it.id" }
+                        job
+                    }.forEach { it.join() }
+            }
+            logger.debug { "End Chain" }
+
             monitorings
-                .onEach { check(it) }
                 .onEach { monitoringService.update(it.id!!, it) }
         }
 
