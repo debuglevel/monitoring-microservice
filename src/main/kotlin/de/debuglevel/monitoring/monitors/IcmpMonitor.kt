@@ -30,8 +30,10 @@ class IcmpMonitor : Monitor {
                 else -> ServiceState.Down
             }
         } catch (e: UnknownHostException) {
+            logger.debug { "Host is down due to: ${e.message}" }
             ServiceState.Down
         } catch (e: ConnectException) {
+            logger.debug { "Host is down due to: ${e.message}" }
             ServiceState.Down
         } catch (e: Exception) {
             logger.warn { "Unhandled exception: $e" }

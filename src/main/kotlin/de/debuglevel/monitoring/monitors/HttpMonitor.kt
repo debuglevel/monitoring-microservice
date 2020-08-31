@@ -50,12 +50,16 @@ class HttpMonitor : Monitor {
             logger.debug { "Opening connection on '$url'..." }
             val connection = url.openConnection() as HttpURLConnection
             SslTrustModifier.relaxHostChecking(connection)
+
+            logger.debug { "Getting response code..." }
             val statusCode = connection.responseCode
 
             if (statusCode < 400) ServiceState.Up else ServiceState.Down
         } catch (e: UnknownHostException) {
+            logger.debug { "Host is down due to: ${e.message}" }
             ServiceState.Down
         } catch (e: ConnectException) {
+            logger.debug { "Host is down due to: ${e.message}" }
             ServiceState.Down
         } catch (e: Exception) {
             logger.warn { "Unhandled exception: $e" }
