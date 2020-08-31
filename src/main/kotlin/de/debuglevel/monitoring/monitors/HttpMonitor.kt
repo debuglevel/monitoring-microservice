@@ -49,6 +49,8 @@ class HttpMonitor : Monitor {
         val state = try {
             logger.debug { "Opening connection on '$url'..." }
             val connection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 500
+
             SslTrustModifier.relaxHostChecking(connection)
 
             logger.debug { "Getting response code..." }
