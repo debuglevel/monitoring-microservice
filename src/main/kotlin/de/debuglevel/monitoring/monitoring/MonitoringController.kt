@@ -77,7 +77,7 @@ class MonitoringController(
     }
 
     @View("list.html")
-    @Get("/html", produces = [MediaType.TEXT_HTML])
+    @Get("/", produces = [MediaType.TEXT_HTML])
     fun getAllHtml(): HttpResponse<*> {
         logger.debug("Called getAllHtml()")
 
