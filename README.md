@@ -101,3 +101,30 @@ Point browser to `http://localhost:80/monitorings/html`.
 [DOWN]	null	tcp://www.google.de:12345
 [ UP ]	2018-10-06 00:30:49	tcp://www.google.de:80
 ```
+
+# Migration from 0.0.x to 0.1.0
+0.1.0 uses Hibernate to store data instead of MongoDB. If you already used version 0.0.x, you have to export all monitorings from 0.0.x and import them into 0.1.0. These two scripts should help you to do this:
+```bash
+#!/bin/bash
+
+rm *.json
+
+COUNT=$(curl --location --request GET 'http://HOST/monitorings/' --header 'Accept: application/json' | jq length)
+echo "There are '$COUNT' objects"
+
+for ((i=0; i<=COUNT-1; i++)); do
+  echo Processing array entry $i...
+  curl --location --request GET 'http://HOST/monitorings/' --header 'Accept: application/json' | jq ".[$i] | {name: .name, url: .url}" > $i.json
+done
+```
+
+```bash
+#!/bin/bash
+
+for i in *.json; do
+  echo Processing $i...
+  curl --location --request POST 'http://HOST/monitorings/' \
+    --header 'Content-Type: application/json' \
+    --data @$i
+done
+```
