@@ -3,10 +3,7 @@ package de.debuglevel.monitoring.monitors
 import de.debuglevel.monitoring.ServiceState
 import de.debuglevel.monitoring.monitoring.Monitoring
 import mu.KotlinLogging
-import java.net.ConnectException
-import java.net.Socket
-import java.net.URI
-import java.net.UnknownHostException
+import java.net.*
 
 class TcpMonitor : Monitor {
     private val logger = KotlinLogging.logger {}
@@ -33,6 +30,8 @@ class TcpMonitor : Monitor {
         } catch (e: UnknownHostException) {
             ServiceState.Down
         } catch (e: ConnectException) {
+            ServiceState.Down
+        } catch (e: NoRouteToHostException) {
             ServiceState.Down
         } catch (e: Exception) {
             logger.warn(e) { "Unhandled exception" }
