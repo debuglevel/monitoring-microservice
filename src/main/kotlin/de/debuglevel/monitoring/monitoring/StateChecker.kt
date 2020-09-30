@@ -53,7 +53,7 @@ class StateChecker(
      * Check given monitoring
      */
     private fun check(monitoring: Monitoring) {
-        logger.debug { "Checking $monitoring..." }
+        logger.trace { "Checking $monitoring..." }
 
         val monitor = Monitor.get(monitoring.url)
         monitoring.serviceState = monitor.check(monitoring)
@@ -63,12 +63,12 @@ class StateChecker(
             monitoring.lastSeen = monitoring.lastCheck
         }
 
-        logger.debug { "Checked $monitoring: ${monitoring.serviceState}" }
+        logger.trace { "Checked $monitoring: ${monitoring.serviceState}" }
     }
 
     private fun resolveHostname(monitoring: Monitoring): String? {
         val hostname = URI(monitoring.url).host
-        logger.debug { "Resolving hostname '$hostname'..." }
+        logger.trace { "Resolving hostname '$hostname'..." }
 
         val ip = try {
             InetAddress.getByName(hostname).hostAddress
@@ -77,7 +77,7 @@ class StateChecker(
             return "could not resolve hostname"
         }
 
-        logger.debug { "Resolved hostname '$hostname': '$ip'" }
+        logger.trace { "Resolved hostname '$hostname': '$ip'" }
         return ip
     }
 }
