@@ -125,11 +125,15 @@ dependencies {
     // Micronaut Persistence
     kapt "io.micronaut.data:micronaut-data-processor"
     implementation "io.micronaut.data:micronaut-data-hibernate-jpa"
-    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
+    /// JDBC Connection Pooling
+    runtimeOnly "io.micronaut.sql:micronaut-jdbc-hikari"
+    //runtimeOnly "io.micronaut.sql:micronaut-jdbc-tomcat"
+    //runtimeOnly "io.micronaut.sql:micronaut-jdbc-dbcp"
+    /// Database drivers
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$mariadbVersion"
-    //testRuntimeOnly "org.hsqldb:hsqldb:$hsqldbVersion"
-    //testRuntimeOnly "org.apache.derby:derby:$derbyVersion"
+    //runtimeOnly "org.hsqldb:hsqldb:$hsqldbVersion"
+    //runtimeOnly "org.apache.derby:derby:$derbyVersion"
 
     // Micronaut Security
     kapt "io.micronaut.security:micronaut-security-annotations"
@@ -226,6 +230,8 @@ test {
 
 allOpen {
     annotation("io.micronaut.aop.Around")
+    //// open @Singleton for Mockito
+    //annotation("javax.inject.Singleton")
 }
 
 // enhance Hibernate entities in bytecode
